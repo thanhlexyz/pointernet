@@ -26,6 +26,13 @@ def get_args():
     # solver
     parser.add_argument('--solver', type=str, default='random')
     parser.add_argument('--dataset', type=str, default='tsp')
+    # dnn hyperparameter
+    parser.add_argument('--net', type=str, default='pointer_net')
+    parser.add_argument('--n_embed', type=int, default=16)
+    parser.add_argument('--n_hidden', type=int, default=256)
+    parser.add_argument('--n_layer', type=int, default=2)
+    parser.add_argument('--dropout', action='store_true')
+    parser.add_argument('--bidirectional', action='store_true')
     # data directory
     parser.add_argument('--dataset_dir', type=str, default='../data/dataset')
     parser.add_argument('--figure_dir', type=str, default='../data/figure')

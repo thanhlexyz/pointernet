@@ -1,5 +1,4 @@
 from . import tsp
 
 def create_dataset(args):
-    if args.dataset == 'tsp':
-        return tsp.Dataset(args)
+    return eval(args.dataset).Dataset(args)
