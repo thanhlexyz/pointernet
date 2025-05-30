@@ -26,7 +26,10 @@ Change `args.n_instance` and `args.n_node` depending on your experimental setup.
 make plot
 ```
 
+![plot_tsp_10.pdf](static/plot_tsp_10.pdf)
+
 
 ## TODO
 
-- [ ] Visualize the generated tours
+- [x] Visualize the generated tours
+- [ ] Inference (test) from random (untrained) model
