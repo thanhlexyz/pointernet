@@ -5,7 +5,7 @@ import os
 torch.set_printoptions(4, sci_mode=False)
 
 def create_folders(args):
-    ls = [args.csv_dir, args.figure_dir, args.benchmark_dir, args.model_dir]
+    ls = [args.csv_dir, args.figure_dir, args.dataset_dir, args.model_dir]
     for folder in ls:
         if not os.path.exists(folder):
             os.makedirs(folder)
@@ -21,13 +21,13 @@ def get_args():
     parser.add_argument('--scenario', type=str, default='main')
     parser.add_argument('--mode', type=str, default='test')
     # prepare
-    parser.add_argument('--n_instance', type=int, default=30)
-    parser.add_argument('--n_step', type=int, default=30)
-    parser.add_argument('--n_node', type=int, default=20)
+    parser.add_argument('--n_instance', type=int, default=1000000)
+    parser.add_argument('--n_node', type=int, default=10)
     # solver
     parser.add_argument('--solver', type=str, default='random')
+    parser.add_argument('--dataset', type=str, default='tsp')
     # data directory
-    parser.add_argument('--benchmark_dir', type=str, default='../data/benchmark')
+    parser.add_argument('--dataset_dir', type=str, default='../data/dataset')
     parser.add_argument('--figure_dir', type=str, default='../data/figure')
     parser.add_argument('--model_dir', type=str, default='../data/model')
     parser.add_argument('--csv_dir', type=str, default='../data/csv')
