@@ -26,7 +26,7 @@ Change `args.n_instance` and `args.n_node` depending on your experimental setup.
 make plot
 ```
 
-![plot_tsp_10.pdf](static/plot_tsp_10.jpg)
+![plot_tsp_10.pdf](static/plot_tsp_10.jpg "Example of generated TSP instance with 10 nodes and its optimal tour")
 
 
 ## TODO
