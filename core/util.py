@@ -21,7 +21,7 @@ def get_args():
     parser.add_argument('--scenario', type=str, default='main')
     parser.add_argument('--mode', type=str, default='test')
     # prepare
-    parser.add_argument('--n_instance', type=int, default=1000000)
+    parser.add_argument('--n_instance', type=int, default=10000)
     parser.add_argument('--n_node', type=int, default=10)
     # solver
     parser.add_argument('--solver', type=str, default='random')
@@ -52,5 +52,4 @@ def get_args():
     # set default device cuda
     set_default_device(args)
     # additional args
-    # args.n_feature = 2
     return args
