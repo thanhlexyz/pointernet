@@ -62,3 +62,4 @@ Example: Convergence chart of training on 2000 examples, testing on 200 examples
 - [x] Visualize the generated tours
 - [x] Inference (test) from random (untrained) model
 - [x] Train model
+- [ ] Train with correct parameter from original paper
