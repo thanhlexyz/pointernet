@@ -18,7 +18,7 @@ class Dataset(Dataset):
         # extract args
         args = self.args
         # check if data exists
-        label = f'{args.dataset}_{args.n_node}_{args.n_instance}.npz'
+        label = f'{args.dataset}_{args.mode}_{args.n_node}_{args.n_instance}.npz'
         path = os.path.join(args.dataset_dir, label)
         if os.path.exists(path):
             data   = np.load(path)
@@ -27,6 +27,7 @@ class Dataset(Dataset):
             print(f'    - loaded {path=}')
         else:
             # generate 2d coordinates for inputs
+            print(f'[+] preparing {label}')
             tic = time.time()
             self.X = np.random.rand(args.n_instance, args.n_node, 2)
             self.Y = Parallel(n_jobs=os.cpu_count())\
@@ -34,9 +35,18 @@ class Dataset(Dataset):
                                   for i in tqdm.tqdm(range(args.n_instance)))
             self.Y = np.array(self.Y)
             # save data
-            label = f'{args.dataset}_{args.n_node}_{args.n_instance}.npz'
+            label = f'{args.dataset}_{args.mode}_{args.n_node}_{args.n_instance}.npz'
             path = os.path.join(args.dataset_dir, label)
             np.savez_compressed(path, X=self.X, Y=self.Y)
             toc = time.time()
             dt  = toc - tic
             print(f'    - saved {path=} {dt=:0.1f} (s)')
+        # convert from double to float
+        self.X = self.X.astype(np.float32)
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, i):
+        sample = {'x': self.X[i], 'y': self.Y[i]}
+        return sample

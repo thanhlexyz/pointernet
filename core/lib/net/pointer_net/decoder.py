@@ -3,6 +3,8 @@ import torch.nn as nn
 from torch.nn import Parameter
 import torch.nn.functional as F
 
+from .attention import Attention
+
 class Decoder(nn.Module):
 
     def __init__(self, args):
@@ -13,7 +15,7 @@ class Decoder(nn.Module):
         self.input_to_hidden = nn.Linear(args.n_embed, 4 * args.n_hidden)
         self.hidden_to_hidden = nn.Linear(args.n_hidden, 4 * args.n_hidden)
         self.hidden_out = nn.Linear(args.n_hidden * 2, args.n_hidden)
-        self.att = Attention(args.n_hidden, args.n_hidden)
+        self.att = Attention(args)
 
         # Used for propagating .cuda() command
         self.mask = Parameter(torch.ones(1), requires_grad=False)
@@ -30,6 +32,7 @@ class Decoder(nn.Module):
         # :return: (Output probabilities, Pointers indices), last hidden state
         batch_size = embedded_inputs.size(0)
         input_length = embedded_inputs.size(1)
+        args = self.args
         # (batch, seq_len)
         mask = self.mask.repeat(input_length).unsqueeze(0).repeat(batch_size, 1)
         self.att.init_inf(mask.size())
@@ -83,8 +86,8 @@ class Decoder(nn.Module):
             mask  = mask * (1 - one_hot_pointers)
 
             # Get embedded inputs by max indices
-            embedding_mask = one_hot_pointers.unsqueeze(2).expand(-1, -1, self.embedding_dim).byte()
-            decoder_input = embedded_inputs[embedding_mask.data].view(batch_size, self.embedding_dim)
+            embedding_mask = one_hot_pointers.unsqueeze(2).expand(-1, -1, args.n_embed).byte()
+            decoder_input = embedded_inputs[embedding_mask.data].view(batch_size, args.n_embed)
 
             outputs.append(outs.unsqueeze(0))
             pointers.append(indices.unsqueeze(1))

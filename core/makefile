@@ -1,5 +1,5 @@
 
-all:
+all: test
 
 test:
 	python3 main.py

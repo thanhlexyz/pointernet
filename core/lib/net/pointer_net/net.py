@@ -10,7 +10,7 @@ class Net(nn.Module):
     # Pointer-Net
 
     def __init__(self, args):
-        super(PointerNet, self).__init__()
+        super().__init__()
         # save args
         self.args = args
         self.embedding = nn.Linear(2, args.n_embed)
@@ -19,7 +19,7 @@ class Net(nn.Module):
         self.decoder_input0 = Parameter(torch.FloatTensor(args.n_embed), requires_grad=False)
 
         # Initialize decoder_input0
-        nn.init.uniform(self.decoder_input0, -1, 1)
+        nn.init.uniform_(self.decoder_input0, -1, 1)
 
     def forward(self, x):
         # :param Tensor x: Input sequence

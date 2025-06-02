@@ -2,9 +2,11 @@ import lib
 
 def main(args):
     # create solver
-
-    # create dataset
-    dataset = lib.create_dataset(args)
-    dataset.prepare()
-    # create net
-    net = lib.create_net(args)
+    solver = lib.create_solver(args)
+    # run mode
+    if args.mode == 'train':
+        solver.train()
+    elif args.mode == 'test':
+        solver.test()
+    else:
+        raise NotImplementedError

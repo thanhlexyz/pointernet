@@ -13,7 +13,7 @@ class Encoder(nn.Module):
         # :param bool bidir: Bidirectional
         super(Encoder, self).__init__()
         self.args = args
-        self.n_hidden      = args.hidden_dim // 2 if args.bidirectional else args.hidden_dim
+        self.n_hidden      = args.hidden_dim // 2 if args.bidirectional else args.n_hidden
         self.n_layer       = args.n_layer * 2 if args.bidirectional else args.n_layer
         self.lstm          = nn.LSTM(args.n_embed,
                                      self.n_hidden,
@@ -38,11 +38,12 @@ class Encoder(nn.Module):
         # :param Tensor embedded_inputs: The embedded input of Pointer-NEt
         # :return: Initiated hidden units for the LSTMs (h, c)
         batch_size = embedded_inputs.size(0)
+        args = self.args
         # Reshaping (Expanding)
-        h0 = self.h0.unsqueeze(0).unsqueeze(0).repeat(self.n_layer,
+        h0 = self.h0.unsqueeze(0).unsqueeze(0).repeat(args.n_layer,
                                                       batch_size,
-                                                      self.n_hidden)
-        c0 = self.h0.unsqueeze(0).unsqueeze(0).repeat(self.n_layer,
+                                                      args.n_hidden)
+        c0 = self.h0.unsqueeze(0).unsqueeze(0).repeat(args.n_layer,
                                                       batch_size,
-                                                      self.n_hidden)
+                                                      args.n_hidden)
         return h0, c0

@@ -21,17 +21,19 @@ def get_args():
     parser.add_argument('--scenario', type=str, default='main')
     parser.add_argument('--mode', type=str, default='test')
     # prepare
-    parser.add_argument('--n_instance', type=int, default=10000)
+    parser.add_argument('--n_train_instance', type=int, default=70000)
+    parser.add_argument('--n_test_instance', type=int, default=30000)
     parser.add_argument('--n_node', type=int, default=10)
     # solver
-    parser.add_argument('--solver', type=str, default='random')
     parser.add_argument('--dataset', type=str, default='tsp')
+    parser.add_argument('--n_train_epoch', type=int, default=100)
+    parser.add_argument('--batch_size', type=int, default=256)
     # dnn hyperparameter
     parser.add_argument('--net', type=str, default='pointer_net')
     parser.add_argument('--n_embed', type=int, default=16)
     parser.add_argument('--n_hidden', type=int, default=256)
     parser.add_argument('--n_layer', type=int, default=2)
-    parser.add_argument('--dropout', action='store_true')
+    parser.add_argument('--dropout', type=float, default=0.)
     parser.add_argument('--bidirectional', action='store_true')
     # data directory
     parser.add_argument('--dataset_dir', type=str, default='../data/dataset')
@@ -57,6 +59,7 @@ def get_args():
     # create folders
     create_folders(args)
     # set default device cuda
-    set_default_device(args)
+    # set_default_device(args)
     # additional args
+    args.n_instance = eval(f'args.n_{args.mode}_instance')
     return args
