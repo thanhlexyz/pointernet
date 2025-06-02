@@ -30,20 +30,29 @@ make plot
 
 
 4. Train the model
+
 ```sh
 make train
 ```
+
 Output data
+
 - `../data/csv/*.csv`: log optimality gap of train/test dataset, train CrossEntropyLoss
 - `../data/model/*.pkl`: best model by optimality gap of train dataset
 
 5. Visualize the training progress
+
 ```sh
 make plot
 ```
+
 Output data
+
 - `../data/figure/*.jpg`: line plot of log optimality gap of train/test dataset, train CrossEntropyLoss
+
 Example: Convergence chart of training on 2000 examples, testing on 200 examples, for TSP problem with 5 nodes.
+
+
 ![Train Optimality Gap](static/plot_line_train_opt_gap_tsp_5.jpg)
 ![Test Optimality Gap](static/plot_line_test_opt_gap_tsp_5.jpg)
 ![Train Cross Entropy Loss](static/plot_line_train_loss_tsp_5.jpg)
