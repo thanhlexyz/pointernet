@@ -8,10 +8,7 @@ class Monitor:
         self.args = args
         # initialize progress bar
         if progress_bar:
-            if args.mode == 'train':
-                T = args.n_train_epoch
-            elif args.mode == 'test':
-                T = args.n_test_instance // args.batch_size + 1
+            T = args.n_epoch
             if progress_bar:
                 self.bar = tqdm.tqdm(range(T))
             # initialize writer

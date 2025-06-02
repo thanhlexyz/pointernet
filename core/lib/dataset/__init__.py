@@ -1,4 +1,4 @@
 from . import tsp
 
-def create_dataset(args):
-    return eval(args.dataset).Dataset(args)
+def create_dataset(mode, args):
+    return eval(args.dataset).Dataset(mode, args)

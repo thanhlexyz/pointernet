@@ -19,15 +19,15 @@ def get_args():
     # create args parser
     parser = argparse.ArgumentParser()
     parser.add_argument('--scenario', type=str, default='main')
-    parser.add_argument('--mode', type=str, default='test')
     # prepare
     parser.add_argument('--n_train_instance', type=int, default=70000)
     parser.add_argument('--n_test_instance', type=int, default=30000)
     parser.add_argument('--n_node', type=int, default=10)
     # solver
     parser.add_argument('--dataset', type=str, default='tsp')
-    parser.add_argument('--n_train_epoch', type=int, default=100)
+    parser.add_argument('--n_epoch', type=int, default=100)
     parser.add_argument('--batch_size', type=int, default=256)
+    parser.add_argument('--learning_rate', type=float, default=1e-3)
     # dnn hyperparameter
     parser.add_argument('--net', type=str, default='pointer_net')
     parser.add_argument('--n_embed', type=int, default=16)
@@ -61,5 +61,4 @@ def get_args():
     # set default device cuda
     # set_default_device(args)
     # additional args
-    args.n_instance = eval(f'args.n_{args.mode}_instance')
     return args

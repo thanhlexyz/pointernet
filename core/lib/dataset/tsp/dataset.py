@@ -10,15 +10,17 @@ from .util import solve_optimal_tsp
 
 class Dataset(Dataset):
 
-    def __init__(self, args):
+    def __init__(self, mode, args):
         # save args
         self.args = args
+        self.mode = mode
 
     def prepare(self):
         # extract args
         args = self.args
         # check if data exists
-        label = f'{args.dataset}_{args.mode}_{args.n_node}_{args.n_instance}.npz'
+        n_instance = eval(f'args.n_{self.mode}_instance')
+        label = f'{args.dataset}_{self.mode}_{args.n_node}_{n_instance}.npz'
         path = os.path.join(args.dataset_dir, label)
         if os.path.exists(path):
             data   = np.load(path)
@@ -29,14 +31,12 @@ class Dataset(Dataset):
             # generate 2d coordinates for inputs
             print(f'[+] preparing {label}')
             tic = time.time()
-            self.X = np.random.rand(args.n_instance, args.n_node, 2)
+            self.X = np.random.rand(n_instance, args.n_node, 2)
             self.Y = Parallel(n_jobs=os.cpu_count())\
                              (delayed(solve_optimal_tsp)(self.X[i, :]) \
-                                  for i in tqdm.tqdm(range(args.n_instance)))
+                                  for i in tqdm.tqdm(range(n_instance)))
             self.Y = np.array(self.Y)
             # save data
-            label = f'{args.dataset}_{args.mode}_{args.n_node}_{args.n_instance}.npz'
-            path = os.path.join(args.dataset_dir, label)
             np.savez_compressed(path, X=self.X, Y=self.Y)
             toc = time.time()
             dt  = toc - tic
