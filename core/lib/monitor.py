@@ -21,10 +21,7 @@ class Monitor:
     def __update_description(self, **kwargs):
         _kwargs = {}
         for key in kwargs:
-            for term in ['n_visited', 'n_step']:
-                if term in key:
-                    _kwargs[key] = f'{kwargs[key]:d}'
-            for term in ['loss']:
+            for term in ['loss', 'gap']:
                 if term in key:
                     _kwargs[key] = f'{kwargs[key]:0.6f}'
         self.bar.set_postfix(**_kwargs)
@@ -48,7 +45,7 @@ class Monitor:
     @property
     def label(self):
         args = self.args
-        label = f'{args.solver}_{args.mode}'
+        label = f'{args.dataset}_{args.n_node}'
         return label
 
     def __update_csv(self, info):
@@ -61,9 +58,7 @@ class Monitor:
     def export_csv(self):
         # extract args
         args = self.args
-        directory = os.path.join(args.csv_dir, args.mode)
-        os.makedirs(directory, exist_ok=True)
         # save data to csv
-        path = os.path.join(args.csv_dir, args.mode, f'{self.label}.csv')
+        path = os.path.join(args.csv_dir, f'{self.label}.csv')
         df = pd.DataFrame(self.csv_data)
         df.to_csv(path, index=None)

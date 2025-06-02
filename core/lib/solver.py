@@ -47,8 +47,7 @@ class Solver:
         # evaluate each batch
         opt_gaps = []
         losses   = []
-        pbar = tqdm.tqdm(dataloader)
-        for batch in pbar:
+        for batch in dataloader:
             x, y        = batch.values()
             x = x.to(args.device)
             y = y.to(args.device)
@@ -65,7 +64,6 @@ class Solver:
             l           = util.get_tour_length(x, y_hat)
             opt_gap     = l - l_opt
             opt_gaps.append(opt_gap)
-            pbar.set_postfix(loss=loss.item(), opt_gap=opt_gap.mean().item())
         opt_gap = torch.cat(opt_gaps).mean().item()
         loss = np.array(losses).mean().item()
         info = {'train_opt_gap': opt_gap, 'train_loss': loss}
@@ -95,6 +93,7 @@ class Solver:
         # extract args
         monitor = self.monitor
         args    = self.args
+        self.best_opt_gap = np.inf
         #
         for epoch in range(args.n_epoch):
             info = {'epoch': epoch}
@@ -102,3 +101,12 @@ class Solver:
             info.update(_)
             _ = self.test_epoch()
             info.update(_)
+            monitor.step(info)
+            monitor.export_csv()
+            if info['train_opt_gap'] < self.best_opt_gap:
+                self.save()
+                self.best_opt_gap = info['train_opt_gap']
+
+    def save(self):
+        path = os.path.join(self.args.model_dir, f'{self.monitor.label}_{self.best_opt_gap:0.2f}.pkl')
+        torch.save(self.net.state_dict(), path)

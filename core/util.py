@@ -20,13 +20,13 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--scenario', type=str, default='main')
     # prepare
-    parser.add_argument('--n_train_instance', type=int, default=70000)
-    parser.add_argument('--n_test_instance', type=int, default=30000)
-    parser.add_argument('--n_node', type=int, default=10)
+    parser.add_argument('--n_train_instance', type=int, default=1000000)
+    parser.add_argument('--n_test_instance', type=int, default=1000)
+    parser.add_argument('--n_node', type=int, default=5)
     # solver
     parser.add_argument('--dataset', type=str, default='tsp')
-    parser.add_argument('--n_epoch', type=int, default=100)
-    parser.add_argument('--batch_size', type=int, default=256)
+    parser.add_argument('--n_epoch', type=int, default=1000)
+    parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--learning_rate', type=float, default=1e-3)
     # dnn hyperparameter
     parser.add_argument('--net', type=str, default='pointer_net')
@@ -41,8 +41,8 @@ def get_args():
     parser.add_argument('--model_dir', type=str, default='../data/model')
     parser.add_argument('--csv_dir', type=str, default='../data/csv')
     # plot
-    parser.add_argument('--metric', type=str, default='reward')
-    parser.add_argument('--n_smooth', type=int, default=1)
+    parser.add_argument('--metric', type=str, default='train_loss')
+    parser.add_argument('--n_smooth', type=int, default=50)
     # other
     if torch.cuda.is_available():
         parser.add_argument('--device', type=str, default='cuda:0')
