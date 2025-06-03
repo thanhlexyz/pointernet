@@ -22,7 +22,7 @@ def get_args():
     # prepare
     parser.add_argument('--n_train_instance', type=int, default=1000000)
     parser.add_argument('--n_test_instance', type=int, default=1000)
-    parser.add_argument('--n_node', type=int, default=5)
+    parser.add_argument('--n_node', type=int, default=10)
     # solver
     parser.add_argument('--dataset', type=str, default='tsp')
     parser.add_argument('--n_epoch', type=int, default=1000)
@@ -42,7 +42,7 @@ def get_args():
     parser.add_argument('--csv_dir', type=str, default='../data/csv')
     # plot
     parser.add_argument('--metric', type=str, default='train_loss')
-    parser.add_argument('--n_smooth', type=int, default=50)
+    parser.add_argument('--n_smooth', type=int, default=10)
     # other
     if torch.cuda.is_available():
         parser.add_argument('--device', type=str, default='cuda:0')

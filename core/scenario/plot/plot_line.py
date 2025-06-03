@@ -23,7 +23,7 @@ def load(args):
 def plot_line(args):
     # scenarios
     datasets = ['tsp']
-    n_nodes = [5]
+    n_nodes = [10]
     for dataset, n_node in it.product(datasets, n_nodes):
         # assign args
         args.dataset = dataset
@@ -41,5 +41,5 @@ def plot_line(args):
     plt.xlabel('epoch')
     plt.ylabel(f'{args.metric}')
     # save figure
-    path = os.path.join(args.figure_dir, f'{args.scenario}_{args.metric}_{label}.pdf')
+    path = os.path.join(args.figure_dir, f'{args.scenario}_{args.metric}_{label}.jpg')
     plt.savefig(path)

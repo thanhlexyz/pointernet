@@ -50,7 +50,7 @@ Output data
 
 - `../data/figure/*.jpg`: line plot of log optimality gap of train/test dataset, train CrossEntropyLoss
 
-Example: Convergence chart of training on 2000 examples, testing on 200 examples, for TSP problem with 5 nodes.
+Example: Convergence chart of training on 1000000 examples, testing on 1000 examples, for TSP problem with 10 nodes.
 
 
 ![Train Optimality Gap](static/plot_line_train_opt_gap_tsp_5.jpg)
