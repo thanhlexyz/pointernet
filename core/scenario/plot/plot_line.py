@@ -40,6 +40,7 @@ def plot_line(args):
     plt.legend()
     plt.xlabel('epoch')
     plt.ylabel(f'{args.metric}')
+    plt.yscale('log')
     # save figure
     path = os.path.join(args.figure_dir, f'{args.scenario}_{args.metric}_{label}.jpg')
     plt.savefig(path)
