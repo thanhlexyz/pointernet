@@ -53,9 +53,9 @@ Output data
 Example: Convergence chart of training on 1000000 examples, testing on 1000 examples, for TSP problem with 10 nodes.
 
 
-![Train Optimality Gap](static/plot_line_train_opt_gap_tsp_5.jpg)
-![Test Optimality Gap](static/plot_line_test_opt_gap_tsp_5.jpg)
-![Train Cross Entropy Loss](static/plot_line_train_loss_tsp_5.jpg)
+![Train Optimality Gap](static/plot_line_train_opt_gap_tsp_10.jpg)
+![Test Optimality Gap](static/plot_line_test_opt_gap_tsp_10.jpg)
+![Train Cross Entropy Loss](static/plot_line_train_loss_tsp_10.jpg)
 
 ## TODO
 
