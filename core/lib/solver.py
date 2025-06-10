@@ -47,7 +47,8 @@ class Solver:
         # evaluate each batch
         opt_gaps = []
         losses   = []
-        for batch in dataloader:
+        # for batch in dataloader:
+        for batch in tqdm.tqdm(dataloader):
             x, y        = batch.values()
             x = x.to(args.device)
             y = y.to(args.device)

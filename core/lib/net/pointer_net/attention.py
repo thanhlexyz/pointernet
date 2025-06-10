@@ -13,10 +13,10 @@ class Attention(nn.Module):
         self.args           = args
         self.input_linear   = nn.Linear(args.n_hidden, args.n_hidden)
         self.context_linear = nn.Conv1d(args.n_hidden, args.n_hidden, 1, 1)
-        self.V = Parameter(torch.FloatTensor(args.n_hidden), requires_grad=True)
-        self._inf = Parameter(torch.FloatTensor([float('-inf')]), requires_grad=False)
-        self.tanh = nn.Tanh()
-        self.softmax = nn.Softmax()
+        self.V              = Parameter(torch.FloatTensor(args.n_hidden), requires_grad=True)
+        self._inf           = Parameter(torch.FloatTensor([float('-inf')]), requires_grad=False)
+        self.tanh           = nn.Tanh()
+        self.softmax        = nn.Softmax()
 
         # Initialize vector V
         nn.init.uniform_(self.V, -1, 1)

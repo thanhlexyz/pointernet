@@ -2,7 +2,7 @@
 all: train plot
 
 train:
-	python3 main.py --scenario=main
+	python3 -W ignore main.py --scenario=main --n_node=5
 
 plot:
 	python3 main.py --scenario=plot_line --metric=train_loss & \

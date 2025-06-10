@@ -25,14 +25,14 @@ def get_args():
     parser.add_argument('--n_node', type=int, default=10)
     # solver
     parser.add_argument('--dataset', type=str, default='tsp')
-    parser.add_argument('--n_epoch', type=int, default=1000)
-    parser.add_argument('--batch_size', type=int, default=100)
+    parser.add_argument('--n_epoch', type=int, default=20)
+    parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--learning_rate', type=float, default=1e-3)
     # dnn hyperparameter
     parser.add_argument('--net', type=str, default='pointer_net')
     parser.add_argument('--n_embed', type=int, default=16)
-    parser.add_argument('--n_hidden', type=int, default=256)
-    parser.add_argument('--n_layer', type=int, default=2)
+    parser.add_argument('--n_hidden', type=int, default=512)
+    parser.add_argument('--n_layer', type=int, default=1)
     parser.add_argument('--dropout', type=float, default=0.)
     parser.add_argument('--bidirectional', action='store_true')
     # data directory

@@ -16,7 +16,6 @@ class Decoder(nn.Module):
         self.hidden_to_hidden = nn.Linear(args.n_hidden, 4 * args.n_hidden)
         self.hidden_out = nn.Linear(args.n_hidden * 2, args.n_hidden)
         self.att = Attention(args)
-
         # Used for propagating .cuda() command
         self.mask = Parameter(torch.ones(1), requires_grad=False)
         self.runner = Parameter(torch.zeros(1), requires_grad=False)
