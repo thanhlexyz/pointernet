@@ -85,13 +85,14 @@ class Decoder(nn.Module):
             
             # For the first step, select top beam_width candidates
             if len(outputs) == 0:
-                # Get top-k scores and indices
-                scores, indices = masked_outs.topk(beam_width, dim=1)
-                # scores: (batch_size, beam_width)
+                # Get top-k scores and indices using log probabilities for numerical stability
+                log_probs = masked_outs.log()
+                beam_log_probs, indices = log_probs.topk(beam_width, dim=1)
+                # beam_log_probs: (batch_size, beam_width)
                 # indices: (batch_size, beam_width)
                 
                 # Initialize beam scores and sequences
-                beam_scores = scores  # (batch_size, beam_width)
+                beam_scores = beam_log_probs  # (batch_size, beam_width)
                 beam_sequences = indices.unsqueeze(-1)  # (batch_size, beam_width, 1)
                 
                 # Take the first beam for now (we'll expand in next steps)
@@ -99,25 +100,26 @@ class Decoder(nn.Module):
                 
             else:
                 # For subsequent steps
-                # Calculate scores for each beam
-                step_scores = masked_outs  # (batch_size, vocab_size)
+                # Calculate scores for each beam using log probabilities
+                step_log_probs = masked_outs.log()  # (batch_size, vocab_size)
                 
-                # Add current scores to cumulative scores
+                # Add current log probs to cumulative log probs (multiplication becomes addition in log space)
                 # Apply length normalization: (l+1)^alpha / 6^alpha, where l is the current sequence length
+                # This helps balance between sequence length and probability
                 length_penalty = ((len(outputs) + 1) ** self.args.beam_alpha) / (6 ** self.args.beam_alpha)
-                cumulative_scores = (beam_scores[:, 0].unsqueeze(-1) + step_scores) / length_penalty  # (batch_size, vocab_size)
+                
+                # For each beam's prediction, calculate cumulative score with each possible next token
+                cumulative_log_probs = (beam_scores[:, 0].unsqueeze(-1) + step_log_probs) / length_penalty  # (batch_size, vocab_size)
                 
                 # Select top-k scores and indices
-                scores, word_indices = cumulative_scores.topk(beam_width, dim=1)  # (batch_size, beam_width)
+                beam_scores, word_indices = cumulative_log_probs.topk(beam_width, dim=1)  # (batch_size, beam_width)
                 
-                # Update beam sequences
+                # Update beam sequences by appending new predictions
+                # Note: Currently tracking only the top beam's history, but maintaining scores for all beams
                 beam_sequences = torch.cat([
                     beam_sequences[:, 0].unsqueeze(1).expand(-1, beam_width, -1),
                     word_indices.unsqueeze(-1)
                 ], dim=-1)
-                
-                # Update beam scores
-                beam_scores = scores
                 
                 # Take the first beam for now
                 indices = word_indices[:, 0]  # (batch_size,)
