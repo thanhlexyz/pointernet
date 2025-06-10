@@ -35,6 +35,9 @@ def get_args():
     parser.add_argument('--n_layer', type=int, default=1)
     parser.add_argument('--dropout', type=float, default=0.)
     parser.add_argument('--bidirectional', action='store_true')
+    # beam search parameters
+    parser.add_argument('--beam_width', type=int, default=3, help='Width of beam for beam search decoding')
+    parser.add_argument('--beam_alpha', type=float, default=0.6, help='Length normalization parameter for beam search')
     # data directory
     parser.add_argument('--dataset_dir', type=str, default='../data/dataset')
     parser.add_argument('--figure_dir', type=str, default='../../static')
