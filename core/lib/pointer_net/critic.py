@@ -28,8 +28,6 @@ class Critic(nn.Module):
         embedding, glimpse, encoder = \
             self.embedding, self.glimpse, self.encoder
         # init
-        nodes, log_probs = [], []
-        mask = torch.zeros([bs, n_node], device=args.device)
         x = x.to(args.device)
         # embed
         e = embedding(x)

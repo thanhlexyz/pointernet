@@ -2,7 +2,7 @@
 all: train plot
 
 train:
-	python3 -W ignore main.py --scenario=train --n_node=5
+	python3 -W ignore main.py --scenario=train --n_node=10
 
 debug:
 	python3 main.py --scenario=debug
