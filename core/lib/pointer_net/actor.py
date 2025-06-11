@@ -29,7 +29,8 @@ class Actor(nn.Module):
         # nodes: (bs, n_node)
         # return: (bs)
         ll = torch.gather(log_probs, dim=2, index=nodes[:, :, None])
-        return torch.sum(log_probs.squeeze(-1), 1)
+        ll = torch.sum(ll.squeeze(-1), 1)
+        return ll
 
     def forward(self, x):
         # extract parameters

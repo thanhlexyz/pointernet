@@ -9,4 +9,6 @@ def debug(args):
     critic = lib.pointer_net.Critic(args)
     # test forward
     ll, y = actor(x)
+    print(ll.shape, y.shape)
     v = critic(x)
+    print(v.shape)

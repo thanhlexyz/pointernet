@@ -30,9 +30,9 @@ def get_args():
     parser.add_argument('--batch_size', type=int, default=130)
     parser.add_argument('--n_train_epoch', type=int, default=20)
     parser.add_argument('--dataset', type=str, default='tsp')
-	parser.add_argument('--lrs_step_size', type=int, default=5e3)
-	parser.add_argument('--lrs_gamma', type=float, default=0.96)
-    parser.add_argument('--n_logging', type=int, default=10)
+    parser.add_argument('--lrs_step_size', type=int, default=5e3)
+    parser.add_argument('--lrs_gamma', type=float, default=0.96)
+    parser.add_argument('--n_logging', type=int, default=100)
     # pointer net hyperparameter
     parser.add_argument('--softmax_temperature', type=float, default=1.0)
     parser.add_argument('--clip_logit', type=float, default=10.0)

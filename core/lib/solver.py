@@ -1,6 +1,8 @@
 from torch.utils.data import DataLoader
 import torch.optim as optim
+import torch.nn as nn
 import numpy as np
+import pickle
 import torch
 import time
 import tqdm
@@ -16,29 +18,30 @@ class Solver:
         # save args
         self.args = args
         # create dataloader dict
-        self.dataloader_dict = lib.create_dataloader_dict(args)
+        self.dataloader_dict = lib.dataset.create(args)
         # create actor/critic model
         self.create_model()
         # load monitor
         self.monitor = lib.Monitor(args)
 
     def create_model(self):
+        args = self.args
         self.actor  = lib.pointer_net.Actor(args)
         self.critic = lib.pointer_net.Critic(args)
         # self.loss_function = torch.nn.CrossEntropyLoss()
-        self.critic_loss_fn = torch.nn.MseLoss()
+        self.critic_loss_fn = torch.nn.MSELoss()
         self.actor_optimizer = \
             optim.Adam(filter(lambda p: p.requires_grad, self.actor.parameters()),
                        lr=args.lr)
-		self.actor_scheduler = \
+        self.actor_scheduler = \
             optim.lr_scheduler.StepLR(self.actor_optimizer,
-						              step_size=args.lrs_step_size,
+                                      step_size=args.lrs_step_size,
                                       gamma=args.lrs_gamma)
         self.critic_optimizer = optim.Adam(filter(lambda p: p.requires_grad, self.critic.parameters()),
                                           lr=args.lr)
-		self.critic_scheduler = \
+        self.critic_scheduler = \
             optim.lr_scheduler.StepLR(self.critic_optimizer,
-						              step_size=args.lrs_step_size,
+                                      step_size=args.lrs_step_size,
                                       gamma=args.lrs_gamma)
 
     def train_epoch(self):
@@ -46,8 +49,8 @@ class Solver:
         args = self.args
         dataloader = self.dataloader_dict['train']
         # extract model
-        actor, actor_loss_fn, actor_optimizer, actor_scheduler = \
-            self.actor, self.actor_loss_fn, self.actor_optimizer, self.actor_scheduler
+        actor, actor_optimizer, actor_scheduler = \
+            self.actor, self.actor_optimizer, self.actor_scheduler
         critic, critic_loss_fn, critic_optimizer, critic_scheduler = \
             self.critic, self.critic_loss_fn, self.critic_optimizer, self.critic_scheduler
         # training loop
@@ -71,7 +74,7 @@ class Solver:
             # optimize actor
             advantage = l.detach() - l_hat.detach()
             actor_loss = (advantage * log_likelihood).mean()
-            actor_optim.zero_grad()
+            actor_optimizer.zero_grad()
             actor_loss.backward()
             nn.utils.clip_grad_norm_(actor.parameters(),
                                      max_norm=1., norm_type=2)
@@ -100,11 +103,11 @@ class Solver:
             for epoch in range(args.n_train_epoch):
                 for info in self.train_epoch():
                     info.update({'step': self.step, 'epoch': epoch})
-                    if self.step % args.n_logging:
+                    if self.step % args.n_logging == 0:
                         monitor.step(info)
                     self.step += 1
         except KeyboardInterrupt:
-            break
+            pass
         finally:
             self.save_model()
 

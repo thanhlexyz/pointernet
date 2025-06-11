@@ -1,6 +1,6 @@
 import lib
 
-def main(args):
+def train(args):
     # create solver
     solver = lib.create_solver(args)
     # run training

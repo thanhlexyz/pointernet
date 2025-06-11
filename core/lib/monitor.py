@@ -9,8 +9,7 @@ class Monitor:
 
     def create_progress_bar(self, n_step):
         # initialize progress bar
-        if progress_bar:
-            self.bar = tqdm.tqdm(range(n_step))
+        self.bar = tqdm.tqdm(range(n_step))
         # initialize writer
         self.csv_data = {}
         self.global_step = 0
