@@ -15,20 +15,9 @@ class Solver:
     def __init__(self, args):
         # save args
         self.args = args
-        # create dataset and dataloader
-        self.train_dataset = lib.create_dataset('train', args)
-        self.train_dataset.prepare()
-        self.test_dataset = lib.create_dataset('test', args)
-        self.test_dataset.prepare()
-        self.train_dataloader = DataLoader(self.train_dataset,
-                                           batch_size=args.batch_size,
-                                           shuffle=True,
-                                           num_workers=os.cpu_count())
-        self.test_dataloader = DataLoader(self.test_dataset,
-                                          batch_size=args.batch_size,
-                                          shuffle=False,
-                                          num_workers=os.cpu_count())
-        # create net
+        # create dataloader dict
+        self.dataloader_dict = lib.create_dataloader_dict(args)
+        # create actor/critic
         self.net = lib.create_net(args).to(args.device)
         self.loss_function = torch.nn.CrossEntropyLoss()
         self.optimizer = optim.Adam(filter(lambda p: p.requires_grad,

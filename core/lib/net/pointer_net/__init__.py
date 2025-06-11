@@ -1,1 +1,2 @@
-from .net import Net
+from .critic import Critic
+from .actor import Actor
