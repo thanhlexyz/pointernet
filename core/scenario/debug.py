@@ -5,6 +5,8 @@ def debug(args):
     # create sample data
     x = torch.rand(args.batch_size, args.n_node, args.n_input)
     # create net
-    net = lib.create_net(args)
+    actor = lib.pointer_net.Actor(args)
+    critic = lib.pointer_net.Critic(args)
     # test forward
-    p, y = net(x)
+    ll, y = actor(x)
+    v = critic(x)

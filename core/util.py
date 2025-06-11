@@ -30,7 +30,6 @@ def get_args():
     parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--learning_rate', type=float, default=1e-3)
     # dnn hyperparameter
-    parser.add_argument('--net', type=str, default='pointer_net')
     parser.add_argument('--n_embed', type=int, default=128)
     parser.add_argument('--n_hidden', type=int, default=256)
     parser.add_argument('--n_glimpse', type=int, default=1)

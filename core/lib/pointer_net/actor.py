@@ -69,4 +69,4 @@ class Actor(nn.Module):
         nodes = torch.stack(nodes, dim=1)
         log_probs = torch.stack(log_probs, dim=1)
 		log_likelihoods = self.get_log_likelihood(torch.stack(log_probs, 1), pi)
-        return nodes, log_likelihoods
+        return log_likelihoods, nodes
