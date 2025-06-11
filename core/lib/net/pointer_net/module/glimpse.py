@@ -12,7 +12,7 @@ class Glimpse(nn.Module):
         self.W_q = nn.Linear(args.n_hidden, args.n_hidden,
                              bias=True, device=args.device)
 
-    def forward(self, q, ref, mask, inf=1e8):
+    def forward(self, q, ref, mask=None, inf=1e8):
         # extract args
         args = self.args
         # u1: (bs, n_hidden, n_node)
@@ -23,7 +23,8 @@ class Glimpse(nn.Module):
         v  = self.v.unsqueeze(0).unsqueeze(0).repeat(ref.size(0), 1, 1)
         # u: (bs, n_node)
         u = torch.bmm(v, torch.tanh(u1 + u2)).squeeze(1)
-        u = u - inf * mask
+        if mask is not None:
+            u = u - inf * mask
         # a: (batch, n_node, i1)
         a = F.softmax(u / args.softmax_temperature, dim = 1)
         # d: (bs, n_hidden)

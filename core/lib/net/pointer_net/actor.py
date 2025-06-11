@@ -5,7 +5,7 @@ import torch
 from . import search_alg
 from . import module
 
-class Net(nn.Module):
+class Actor(nn.Module):
 
     def __init__(self, args):
         super().__init__()
@@ -21,9 +21,9 @@ class Net(nn.Module):
         # search_alg
         self.search_alg = search_alg.create(args)
 
-    def init_weight(self, init_min=-0.08, init_max=0.08):
+    def init_weight(self):
         for p in self.parameters():
-            nn.init.uniform_(p.data, init_min, init_max)
+            nn.init.uniform_(p.data, -0.08, 0.08)
 
 	def get_log_likelihood(self, log_probs, nodes):
 	    # log_probs: (bs, n_node, n_node)

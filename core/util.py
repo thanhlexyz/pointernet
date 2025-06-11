@@ -33,9 +33,8 @@ def get_args():
     parser.add_argument('--net', type=str, default='pointer_net')
     parser.add_argument('--n_embed', type=int, default=128)
     parser.add_argument('--n_hidden', type=int, default=256)
-    parser.add_argument('--n_layer', type=int, default=1)
-    parser.add_argument('--dropout', type=float, default=0.)
-    parser.add_argument('--bidirectional', action='store_true')
+    parser.add_argument('--n_glimpse', type=int, default=1)
+    parser.add_argument('--n_process', type=int, default=3)
     # beam search parameters
     parser.add_argument('--n_beam', type=int, default=3)
     # data directory
