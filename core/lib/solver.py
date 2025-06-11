@@ -17,87 +17,116 @@ class Solver:
         self.args = args
         # create dataloader dict
         self.dataloader_dict = lib.create_dataloader_dict(args)
-        # create actor/critic
-        self.net = lib.create_net(args).to(args.device)
-        self.loss_function = torch.nn.CrossEntropyLoss()
-        self.optimizer = optim.Adam(filter(lambda p: p.requires_grad,
-                                    self.net.parameters()),
-                         lr=args.learning_rate)
+        # create actor/critic model
+        self.create_model()
         # load monitor
         self.monitor = lib.Monitor(args)
-    # =========================================
+
+    def create_model(self):
+        self.actor  = lib.pointer_net.Actor(args)
+        self.critic = lib.pointer_net.Critic(args)
+        # self.loss_function = torch.nn.CrossEntropyLoss()
+        self.critic_loss_fn = torch.nn.MseLoss()
+        self.actor_optimizer = \
+            optim.Adam(filter(lambda p: p.requires_grad, self.actor.parameters()),
+                       lr=args.lr)
+		self.actor_scheduler = \
+            optim.lr_scheduler.StepLR(self.actor_optimizer,
+						              step_size=args.lrs_step_size,
+                                      gamma=args.lrs_gamma)
+        self.critic_optimizer = optim.Adam(filter(lambda p: p.requires_grad, self.critic.parameters()),
+                                          lr=args.lr)
+		self.critic_scheduler = \
+            optim.lr_scheduler.StepLR(self.critic_optimizer,
+						              step_size=args.lrs_step_size,
+                                      gamma=args.lrs_gamma)
+
     def train_epoch(self):
         # extract args
-        loss_function = self.loss_function
-        dataloader    = self.train_dataloader
-        optimizer     = self.optimizer
-        args          = self.args
-        net           = self.net
-        # evaluate each batch
-        opt_gaps = []
-        losses   = []
-        # for batch in dataloader:
-        for batch in tqdm.tqdm(dataloader):
-            x, y        = batch.values()
+        args = self.args
+        dataloader = self.dataloader_dict['train']
+        # extract model
+        actor, actor_loss_fn, actor_optimizer, actor_scheduler = \
+            self.actor, self.actor_loss_fn, self.actor_optimizer, self.actor_scheduler
+        critic, critic_loss_fn, critic_optimizer, critic_scheduler = \
+            self.critic, self.critic_loss_fn, self.critic_optimizer, self.critic_scheduler
+        # training loop
+        for batch in dataloader:
+            # extract data
+            x, y = batch.values()
             x = x.to(args.device)
             y = y.to(args.device)
-            # x.shape = (bs, n_node, 2); y.shape = (bs, n_step)
-            net(x)
-            exit()
-            # prob.shape (bs, step id, node id)
-            prob        = prob.contiguous().view(-1, prob.size()[-1])
-            loss        = loss_function(prob, y.view(-1))
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            losses.append(loss.item())
-            l_opt       = util.get_tour_length(x, y)
-            l           = util.get_tour_length(x, y_hat)
-            opt_gap     = l - l_opt
-            opt_gaps.append(opt_gap)
-        opt_gap = torch.cat(opt_gaps).mean().item()
-        loss = np.array(losses).mean().item()
-        info = {'train_opt_gap': opt_gap, 'train_loss': loss}
-        return info
-
-    def test_epoch(self):
-        # extract args
-        dataloader = self.test_dataloader
-        args       = self.args
-        net        = self.net
-        # evaluate each batch
-        opt_gaps = []
-        for i, batch in enumerate(dataloader):
-            x, y     = batch.values()
-            x = x.to(args.device)
-            y = y.to(args.device)
-            _, y_hat = net(x)
-            l_opt    = util.get_tour_length(x, y)
-            l        = util.get_tour_length(x, y_hat)
-            opt_gap  = l - l_opt
-            opt_gaps.append(opt_gap)
-        opt_gap = torch.cat(opt_gaps).mean().item()
-        info = {'test_opt_gap': opt_gap}
-        return info
+            # get actor prediction
+            log_likelihood, y_hat = actor(x)
+            # optimize critic
+            l = util.get_tour_length(x, y_hat)
+            l_hat = self.critic(x)
+            critic_loss = critic_loss_fn(l_hat, l.detach())
+            critic_optimizer.zero_grad()
+            critic_loss.backward()
+            nn.utils.clip_grad_norm_(critic.parameters(),
+                                     max_norm=1., norm_type=2)
+            critic_optimizer.step()
+            critic_scheduler.step()
+            # optimize actor
+            advantage = l.detach() - l_hat.detach()
+            actor_loss = (advantage * log_likelihood).mean()
+            actor_optim.zero_grad()
+            actor_loss.backward()
+            nn.utils.clip_grad_norm_(actor.parameters(),
+                                     max_norm=1., norm_type=2)
+            actor_optimizer.step()
+            actor_scheduler.step()
+            # gather info
+            info = {
+                'actor_loss': actor_loss.item(),
+                'critic_loss': critic_loss.item(),
+                'avg_tour_length': l.mean().item(),
+            }
+            yield info
 
     def train(self):
         # extract args
-        monitor = self.monitor
-        args    = self.args
-        self.best_opt_gap = np.inf
+        args       = self.args
+        dataloader = self.dataloader_dict['train']
+        monitor    = self.monitor
+        n_step     = len(dataloader) * args.n_train_epoch
+        self.actor.train()
+        self.critic.train()
         #
-        for epoch in range(args.n_epoch):
-            info = {'epoch': epoch}
-            _ = self.train_epoch()
-            info.update(_)
-            _ = self.test_epoch()
-            info.update(_)
-            monitor.step(info)
-            monitor.export_csv()
-            if info['train_opt_gap'] < self.best_opt_gap:
-                self.save()
-                self.best_opt_gap = info['train_opt_gap']
+        monitor.create_progress_bar(n_step)
+        self.step = 0
+        try:
+            for epoch in range(args.n_train_epoch):
+                for info in self.train_epoch():
+                    info.update({'step': self.step, 'epoch': epoch})
+                    if self.step % args.n_logging:
+                        monitor.step(info)
+                    self.step += 1
+        except KeyboardInterrupt:
+            break
+        finally:
+            self.save_model()
 
-    def save(self):
-        path = os.path.join(self.args.model_dir, f'{self.monitor.label}_{self.best_opt_gap:0.2f}.pkl')
-        torch.save(self.net.state_dict(), path)
+    def save_model(self):
+        args = self.args
+        state_dict = self.actor.state_dict()
+        # save model
+        path = os.path.join(args.model_dir, f'{self.monitor.label}.pkl')
+        data = {'actor': self.actor.state_dict(),
+                'critic': self.critic.state_dict()}
+        with open(path, 'wb') as fp:
+            pickle.dump(data, fp, protocol=pickle.HIGHEST_PROTOCOL)
+            print(f'[+] saved at {self.step=} {path=}')
+
+    def load_model(self):
+        args = self.args
+        path = os.path.join(args.model_dir, f'{self.monitor.label}.pkl')
+        if os.path.exists(path):
+            print(f'[+] loading {path}')
+            with open(path, 'rb') as fp:
+                data = pickle.load(fp)
+            self.actor.load_state_dict(data['actor'])
+            self.critic.load_state_dict(data['critic'])
+            self.actor.eval()
+            self.critic.eval()

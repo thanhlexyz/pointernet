@@ -3,25 +3,25 @@ import tqdm
 import os
 
 class Monitor:
-    def __init__(self, args, progress_bar=True):
+    def __init__(self, args):
         # save
         self.args = args
+
+    def create_progress_bar(self, n_step):
         # initialize progress bar
         if progress_bar:
-            T = args.n_epoch
-            if progress_bar:
-                self.bar = tqdm.tqdm(range(T))
-            # initialize writer
-            self.csv_data = {}
-            self.global_step = 0
+            self.bar = tqdm.tqdm(range(n_step))
+        # initialize writer
+        self.csv_data = {}
+        self.global_step = 0
 
     def __update_time(self):
-        self.bar.update(1)
+        self.bar.update(self.args.n_logging)
 
     def __update_description(self, **kwargs):
         _kwargs = {}
         for key in kwargs:
-            for term in ['loss', 'gap']:
+            for term in ['loss', 'length']:
                 if term in key:
                     _kwargs[key] = f'{kwargs[key]:0.6f}'
         self.bar.set_postfix(**_kwargs)
@@ -37,7 +37,7 @@ class Monitor:
         self.__display()
         # log to csv
         self.__update_csv(info)
-        self.global_step += 1
+        self.global_step += self.args.n_logging
 
     ####################################################################################
     # MODIFY HERE
