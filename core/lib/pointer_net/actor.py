@@ -1,4 +1,3 @@
-import torch.nn.functional as F
 import torch.nn as nn
 import torch
 
@@ -25,12 +24,12 @@ class Actor(nn.Module):
         for p in self.parameters():
             nn.init.uniform_(p.data, -0.08, 0.08)
 
-	def get_log_likelihood(self, log_probs, nodes):
-	    # log_probs: (bs, n_node, n_node)
-		# nodes: (bs, n_node)
-		# return: (bs)
-		ll = torch.gather(log_probs, dim=2, index=nodes[:, :, None])
-		return torch.sum(log_p.squeeze(-1), 1)
+    def get_log_likelihood(self, log_probs, nodes):
+        # log_probs: (bs, n_node, n_node)
+        # nodes: (bs, n_node)
+        # return: (bs)
+        ll = torch.gather(log_probs, dim=2, index=nodes[:, :, None])
+        return torch.sum(log_probs.squeeze(-1), 1)
 
     def forward(self, x):
         # extract parameters
@@ -40,6 +39,9 @@ class Actor(nn.Module):
         nodes, log_probs = [], []
         mask = torch.zeros([bs, n_node], device=args.device)
         x = x.to(args.device)
+        embedding, glimpse, encoder, decoder, pointer, search_alg = \
+            self.embedding, self.glimpse, self.encoder, self.decoder, \
+            self.pointer, self.search_alg
         # embed
         e = embedding(x)
         # encode
@@ -59,14 +61,13 @@ class Actor(nn.Module):
             # select next node
             next_node = self.search_alg(log_prob) # (bs, )
             z = decoder.gather_z(e, next_node)
-            nodes.append(next_node)
             # store decoding results
             nodes.append(next_node)
             log_probs.append(log_prob)
             # update mask
             mask += torch.zeros((bs, n_node), device=args.device).\
                     scatter_(dim=1, index=next_node.unsqueeze(1), value=1)
-        nodes = torch.stack(nodes, dim=1)
         log_probs = torch.stack(log_probs, dim=1)
-		log_likelihoods = self.get_log_likelihood(torch.stack(log_probs, 1), pi)
+        nodes = torch.stack(nodes, dim=1)
+        log_likelihoods = self.get_log_likelihood(log_probs, nodes)
         return log_likelihoods, nodes

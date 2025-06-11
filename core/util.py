@@ -21,20 +21,24 @@ def get_args():
     parser.add_argument('--scenario', type=str, default='main')
     # prepare
     parser.add_argument('--n_train_instance', type=int, default=1000000)
-    parser.add_argument('--n_test_instance', type=int, default=1000)
+    parser.add_argument('--n_val_instance', type=int, default=10000)
+    parser.add_argument('--n_test_instance', type=int, default=10000)
     parser.add_argument('--n_input', type=int, default=2)
     parser.add_argument('--n_node', type=int, default=10)
     # solver
-    parser.add_argument('--dataset', type=str, default='tsp')
-    parser.add_argument('--n_epoch', type=int, default=20)
-    parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--learning_rate', type=float, default=1e-3)
-    # dnn hyperparameter
-    parser.add_argument('--n_embed', type=int, default=128)
-    parser.add_argument('--n_hidden', type=int, default=256)
-    parser.add_argument('--n_glimpse', type=int, default=1)
+    parser.add_argument('--batch_size', type=int, default=130)
+    parser.add_argument('--n_epoch', type=int, default=20)
+    parser.add_argument('--dataset', type=str, default='tsp')
+    # pointer net hyperparameter
+    parser.add_argument('--softmax_temperature', type=float, default=1.0)
+    parser.add_argument('--clip_logit', type=float, default=10.0)
     parser.add_argument('--n_process', type=int, default=3)
-    # beam search parameters
+    parser.add_argument('--n_glimpse', type=int, default=1)
+    parser.add_argument('--n_hidden', type=int, default=256)
+    parser.add_argument('--n_embed', type=int, default=128)
+    # search parameters
+    parser.add_argument('--search_alg', type=str, default='greedy')
     parser.add_argument('--n_beam', type=int, default=3)
     # data directory
     parser.add_argument('--dataset_dir', type=str, default='../data/dataset')

@@ -13,7 +13,9 @@ class Decoder(nn.Module):
 
     def get_z0(self, x):
         bs, _, _ = x.size()
+        args = self.args
         z0 = self.g.unsqueeze(0).repeat(bs, 1).unsqueeze(1).to(args.device)
+        return z0
 
     def gather_z(self, e, next_node):
         args = self.args

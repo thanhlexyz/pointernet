@@ -4,7 +4,7 @@ import torch
 
 from . import module
 
-class Actor(nn.Module):
+class Critic(nn.Module):
 
     def __init__(self, args):
         super().__init__()
@@ -25,6 +25,8 @@ class Actor(nn.Module):
         # extract parameters
         args = self.args
         bs, n_node, _ = x.size()
+        embedding, glimpse, encoder = \
+            self.embedding, self.glimpse, self.encoder
         # init
         nodes, log_probs = [], []
         mask = torch.zeros([bs, n_node], device=args.device)
@@ -36,7 +38,7 @@ class Actor(nn.Module):
         q = h[-1]
         for _ in range(args.n_process):
             for _ in range(args.n_glimpse):
-				query = self.glimpse(query, ref)
+                q = self.glimpse(q, ref)
         # predict
-        value = self.regression(query)
+        value = self.regression(q)
         return value

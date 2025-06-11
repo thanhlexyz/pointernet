@@ -26,7 +26,7 @@ class Glimpse(nn.Module):
         if mask is not None:
             u = u - inf * mask
         # a: (batch, n_node, i1)
-        a = F.softmax(u / args.softmax_temperature, dim = 1)
+        a = nn.functional.softmax(u / args.softmax_temperature, dim = 1)
         # d: (bs, n_hidden)
         d = torch.bmm(u2, a.unsqueeze(2)).squeeze(2)
         return d
