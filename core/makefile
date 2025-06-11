@@ -2,7 +2,11 @@
 all: train plot
 
 train:
+	git pull origin master
 	python3 -W ignore main.py --scenario=main --n_node=5
+
+debug:
+	python3 main.py --scenario=debug
 
 plot:
 	python3 main.py --scenario=plot_line --metric=train_loss & \
