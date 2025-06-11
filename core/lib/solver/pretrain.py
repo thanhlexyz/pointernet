@@ -110,6 +110,38 @@ class Solver:
             pass
         finally:
             self.save_model()
+            self.export_csv(mode='train')
+
+    def test_epoch(self):
+        # extract args
+        args = self.args
+        dataloader = self.dataloader_dict['test']
+        # extract model
+        actor = self.actor
+        # training loop
+        for batch in dataloader:
+            # extract data
+            x, _ = batch.values()
+            x = x.to(args.device)
+            # get actor prediction
+            _, y_hat = actor(x)
+            l = util.get_tour_length(x, y_hat)
+            # gather info
+            yield l
+
+    def test(self):
+        # extract args
+        args = self.args
+        monitor = self.monitor
+        self.load_model()
+        self.actor.eval()
+        ls = []
+        for l in self.train_epoch():
+            ls.append(l)
+        ls = torch.cat(ls).detach().cpu().numpy()
+        info = {'avg_tour_length': np.mean(ls)}
+        monitor.step(info)
+        self.export_csv(mode='test')
 
     def save_model(self):
         args = self.args
@@ -133,3 +165,6 @@ class Solver:
             self.critic.load_state_dict(data['critic'])
             self.actor.eval()
             self.critic.eval()
+
+    def test(self):
+        pass

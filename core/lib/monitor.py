@@ -6,13 +6,13 @@ class Monitor:
     def __init__(self, args):
         # save
         self.args = args
+        # initialize writer
+        self.csv_data = {}
+        self.global_step = 0
 
     def create_progress_bar(self, n_step):
         # initialize progress bar
         self.bar = tqdm.tqdm(range(n_step))
-        # initialize writer
-        self.csv_data = {}
-        self.global_step = 0
 
     def __update_time(self):
         self.bar.update(self.args.n_logging)
@@ -54,10 +54,12 @@ class Monitor:
             else:
                 self.csv_data[key].append(float(info[key]))
 
-    def export_csv(self):
+    def export_csv(self, mode):
         # extract args
         args = self.args
+        d = os.path.join(args.csv_dir, mode)
+        os.makedirs(d)
         # save data to csv
-        path = os.path.join(args.csv_dir, f'{self.label}.csv')
+        path = os.path.join(d, f'{self.label}.csv')
         df = pd.DataFrame(self.csv_data)
         df.to_csv(path, index=None)

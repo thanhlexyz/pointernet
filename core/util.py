@@ -19,17 +19,19 @@ def get_args():
     # create args parser
     parser = argparse.ArgumentParser()
     parser.add_argument('--scenario', type=str, default='main')
+    parser.add_argument('--mode', type=str, default='test')
     # prepare
     parser.add_argument('--n_train_instance', type=int, default=1000000)
     parser.add_argument('--n_val_instance', type=int, default=10000)
     parser.add_argument('--n_test_instance', type=int, default=10000)
+    parser.add_argument('--dataset', type=str, default='tsp')
     parser.add_argument('--n_input', type=int, default=2)
     parser.add_argument('--n_node', type=int, default=10)
     # solver
+    parser.add_argument('--solver', type=str, default='pretrain')
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--batch_size', type=int, default=130)
     parser.add_argument('--n_train_epoch', type=int, default=20)
-    parser.add_argument('--dataset', type=str, default='tsp')
     parser.add_argument('--lrs_step_size', type=int, default=5e3)
     parser.add_argument('--lrs_gamma', type=float, default=0.96)
     parser.add_argument('--n_logging', type=int, default=100)
