@@ -30,17 +30,19 @@ def get_args():
     # solver
     parser.add_argument('--solver', type=str, default='pretrain')
     parser.add_argument('--lr', type=float, default=1e-3)
-    parser.add_argument('--batch_size', type=int, default=130)
+    parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--n_train_epoch', type=int, default=20)
     parser.add_argument('--lrs_step_size', type=int, default=5e3)
     parser.add_argument('--lrs_gamma', type=float, default=0.96)
     parser.add_argument('--n_logging', type=int, default=100)
+    parser.add_argument('--n_sampling', type=int, default=250)
+    parser.add_argument('--sampling_batch_size', type=int, default=5120)
     # pointer net hyperparameter
     parser.add_argument('--softmax_temperature', type=float, default=1.0)
     parser.add_argument('--clip_logit', type=float, default=10.0)
     parser.add_argument('--n_process', type=int, default=3)
     parser.add_argument('--n_glimpse', type=int, default=1)
-    parser.add_argument('--n_hidden', type=int, default=256)
+    parser.add_argument('--n_hidden', type=int, default=128)
     parser.add_argument('--n_embed', type=int, default=128)
     # search parameters
     parser.add_argument('--search_alg', type=str, default='greedy')

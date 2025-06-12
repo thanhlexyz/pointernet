@@ -53,21 +53,25 @@ class Solver:
         # extract args
         args = self.args
         dataset = self.dataloader_dict['test'].dataset
-        for x, y in dataset:
-            print(x)
-            exit()
         # extract model
         actor = self.actor
-        # training loop
-        for batch in dataloader:
-            # extract data
-            x, _ = batch.values()
-            x = x.to(args.device)
+        # sampling loop
+        for item in tqdm.tqdm(dataset):
+            x, y = item.values()
+            l_best = torch.inf
+            x = torch.tensor(x, device=args.device)
+            y = torch.tensor(y, device=args.device)
+            x = x.repeat(args.sampling_batch_size, 1, 1)
             # get actor prediction
             _, y_hat = actor(x)
             l = util.get_tour_length(x, y_hat)
+            idx = torch.argmin(l)
+            l = l[idx]
+            y_hat = y_hat[idx]
+            if l < l_best:
+                l_best = l.item()
             # gather info
-            yield l
+            yield l_best
 
     def test(self):
         # extract args
@@ -78,7 +82,7 @@ class Solver:
         ls = []
         for l in self.test_epoch():
             ls.append(l)
-        ls = torch.cat(ls).detach().cpu().numpy()
+        ls = np.array(ls)
         info = {'avg_tour_length': np.mean(ls)}
         monitor.step(info)
         monitor.export_csv(mode='test')

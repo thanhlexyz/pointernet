@@ -33,7 +33,6 @@ class Solver:
         args = self.args
         self.actor  = lib.pointer_net.Actor(args)
         self.critic = lib.pointer_net.Critic(args)
-        # self.loss_function = torch.nn.CrossEntropyLoss()
         self.critic_loss_fn = torch.nn.MSELoss()
         self.actor_optimizer = \
             optim.Adam(filter(lambda p: p.requires_grad, self.actor.parameters()),
@@ -48,6 +47,8 @@ class Solver:
             optim.lr_scheduler.StepLR(self.critic_optimizer,
                                       step_size=args.lrs_step_size,
                                       gamma=args.lrs_gamma)
+        if args.load_state_dict:
+            self.load_model()
 
     def train_epoch(self):
         # extract args
