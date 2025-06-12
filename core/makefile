@@ -2,7 +2,13 @@
 all: train plot
 
 train:
-	python3 -W ignore main.py --scenario=train --n_node=10
+	python3 main.py --scenario=train --n_node=10
+
+test:
+	python3 main.py --scenario=main --mode=test --solver=pretrain --n_node=10
+	python3 main.py --scenario=main --mode=test --solver=optimal --n_node=10
+# 	python3 main.py --scenario=main --mode=test --solver=pretrain --n_node=5
+# 	python3 main.py --scenario=main --mode=test --solver=optimal --n_node=5
 
 debug:
 	python3 main.py --scenario=debug

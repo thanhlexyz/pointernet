@@ -8,7 +8,7 @@ import time
 import tqdm
 import os
 
-from . import util
+import lib.util as util
 import lib
 
 
@@ -23,6 +23,11 @@ class Solver:
         self.create_model()
         # load monitor
         self.monitor = lib.Monitor(args)
+
+    @property
+    def label(self):
+        args = self.args
+        return f'{args.dataset}_{args.n_node}'
 
     def create_model(self):
         args = self.args
@@ -110,7 +115,7 @@ class Solver:
             pass
         finally:
             self.save_model()
-            self.export_csv(mode='train')
+            monitor.export_csv(mode='train')
 
     def test_epoch(self):
         # extract args
@@ -136,18 +141,18 @@ class Solver:
         self.load_model()
         self.actor.eval()
         ls = []
-        for l in self.train_epoch():
+        for l in self.test_epoch():
             ls.append(l)
         ls = torch.cat(ls).detach().cpu().numpy()
         info = {'avg_tour_length': np.mean(ls)}
         monitor.step(info)
-        self.export_csv(mode='test')
+        monitor.export_csv(mode='test')
 
     def save_model(self):
         args = self.args
         state_dict = self.actor.state_dict()
         # save model
-        path = os.path.join(args.model_dir, f'{self.monitor.label}.pkl')
+        path = os.path.join(args.model_dir, f'{self.label}.pkl')
         data = {'actor': self.actor.state_dict(),
                 'critic': self.critic.state_dict()}
         with open(path, 'wb') as fp:
@@ -156,7 +161,7 @@ class Solver:
 
     def load_model(self):
         args = self.args
-        path = os.path.join(args.model_dir, f'{self.monitor.label}.pkl')
+        path = os.path.join(args.model_dir, f'{self.label}.pkl')
         if os.path.exists(path):
             print(f'[+] loading {path}')
             with open(path, 'rb') as fp:
@@ -165,6 +170,3 @@ class Solver:
             self.critic.load_state_dict(data['critic'])
             self.actor.eval()
             self.critic.eval()
-
-    def test(self):
-        pass

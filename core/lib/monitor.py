@@ -9,13 +9,15 @@ class Monitor:
         # initialize writer
         self.csv_data = {}
         self.global_step = 0
+        self.bar = None
 
     def create_progress_bar(self, n_step):
         # initialize progress bar
         self.bar = tqdm.tqdm(range(n_step))
 
     def __update_time(self):
-        self.bar.update(self.args.n_logging)
+        if self.bar:
+            self.bar.update(self.args.n_logging)
 
     def __update_description(self, **kwargs):
         _kwargs = {}
@@ -23,10 +25,12 @@ class Monitor:
             for term in ['loss', 'length']:
                 if term in key:
                     _kwargs[key] = f'{kwargs[key]:0.6f}'
-        self.bar.set_postfix(**_kwargs)
+        if self.bar:
+            self.bar.set_postfix(**_kwargs)
 
     def __display(self):
-        self.bar.display()
+        if self.bar:
+            self.bar.display()
 
     def step(self, info):
         # extract stats from all stations
@@ -44,7 +48,7 @@ class Monitor:
     @property
     def label(self):
         args = self.args
-        label = f'{args.dataset}_{args.n_node}'
+        label = f'{args.dataset}_{args.n_node}_{args.solver}'
         return label
 
     def __update_csv(self, info):
@@ -58,7 +62,8 @@ class Monitor:
         # extract args
         args = self.args
         d = os.path.join(args.csv_dir, mode)
-        os.makedirs(d)
+        if not os.path.exists(d):
+            os.makedirs(d)
         # save data to csv
         path = os.path.join(d, f'{self.label}.csv')
         df = pd.DataFrame(self.csv_data)

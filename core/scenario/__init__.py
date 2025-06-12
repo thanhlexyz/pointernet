@@ -1,3 +1,3 @@
-from .train import train
 from .debug import debug
+from .main import main
 from .plot import *
