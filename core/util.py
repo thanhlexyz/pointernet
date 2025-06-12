@@ -34,7 +34,7 @@ def get_args():
     parser.add_argument('--lrs_step_size', type=int, default=5e3)
     parser.add_argument('--lrs_gamma', type=float, default=0.96)
     parser.add_argument('--n_logging', type=int, default=100)
-    parser.add_argument('--n_sample_step', type=int, default=10)
+    parser.add_argument('--n_sample_step', type=int, default=100)
     parser.add_argument('--active_search_alpha', type=float, default=0.99)
     # pointer net hyperparameter
     parser.add_argument('--softmax_temperature', type=float, default=1.0)
