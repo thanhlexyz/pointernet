@@ -60,8 +60,10 @@ class Solver:
         # extract args
         args = self.args
         # extract model
-        actor = self.actor
+        self.load_model()
+        self.actor.eval()
         actor_optimizer = self.actor_optimizer
+        actor = self.actor
         actor.train()
         # init
         l_best = torch.inf
@@ -108,8 +110,6 @@ class Solver:
         # extract args
         args = self.args
         monitor = self.monitor
-        self.load_model()
-        self.actor.eval()
         ls = []
         for l in self.test_epoch():
             ls.append(l)
