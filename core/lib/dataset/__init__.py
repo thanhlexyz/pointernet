@@ -4,7 +4,7 @@ import os
 
 def create(args):
     dataloader_dict = {}
-    for mode in ['train', 'val', 'test']:
+    for mode in ['train', 'test']:
         dataset = eval(args.dataset).Dataset(mode, args)
         dataset.prepare()
         dataloader_dict[mode] = DataLoader(dataset,

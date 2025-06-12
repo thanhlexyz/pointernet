@@ -26,7 +26,8 @@ class Dataset(Dataset):
             data   = np.load(path)
             self.X = data['X']
             self.Y = data['Y']
-            print(f'    - loaded {path=}')
+            if args.verbose:
+                print(f'    - loaded {path=}')
         else:
             # generate 2d coordinates for inputs
             print(f'[+] preparing {label}')

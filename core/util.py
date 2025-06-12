@@ -22,11 +22,10 @@ def get_args():
     parser.add_argument('--mode', type=str, default='test')
     # prepare
     parser.add_argument('--n_train_instance', type=int, default=1000000)
-    parser.add_argument('--n_val_instance', type=int, default=10000)
-    parser.add_argument('--n_test_instance', type=int, default=10000)
+    parser.add_argument('--n_test_instance', type=int, default=1000)
     parser.add_argument('--dataset', type=str, default='tsp')
     parser.add_argument('--n_input', type=int, default=2)
-    parser.add_argument('--n_node', type=int, default=10)
+    parser.add_argument('--n_node', type=int, default=5)
     # solver
     parser.add_argument('--solver', type=str, default='pretrain')
     parser.add_argument('--lr', type=float, default=1e-3)
@@ -35,8 +34,8 @@ def get_args():
     parser.add_argument('--lrs_step_size', type=int, default=5e3)
     parser.add_argument('--lrs_gamma', type=float, default=0.96)
     parser.add_argument('--n_logging', type=int, default=100)
-    parser.add_argument('--n_sampling', type=int, default=250)
-    parser.add_argument('--sampling_batch_size', type=int, default=5120)
+    parser.add_argument('--n_sampling', type=int, default=1)
+    parser.add_argument('--sampling_batch_size', type=int, default=10000)
     # pointer net hyperparameter
     parser.add_argument('--softmax_temperature', type=float, default=1.0)
     parser.add_argument('--clip_logit', type=float, default=10.0)
@@ -49,12 +48,12 @@ def get_args():
     parser.add_argument('--n_beam', type=int, default=3)
     # data directory
     parser.add_argument('--dataset_dir', type=str, default='../data/dataset')
-    parser.add_argument('--figure_dir', type=str, default='../../static')
+    parser.add_argument('--figure_dir', type=str, default='../data/figure')
     parser.add_argument('--model_dir', type=str, default='../data/model')
     parser.add_argument('--csv_dir', type=str, default='../data/csv')
     # plot
-    parser.add_argument('--metric', type=str, default='train_loss')
-    parser.add_argument('--n_smooth', type=int, default=10)
+    parser.add_argument('--metric', type=str, default='avg_tour_length')
+    parser.add_argument('--n_smooth', type=int, default=50)
     # other
     if torch.cuda.is_available():
         parser.add_argument('--device', type=str, default='cuda:0')

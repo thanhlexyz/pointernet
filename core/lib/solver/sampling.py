@@ -63,13 +63,14 @@ class Solver:
             y = torch.tensor(y, device=args.device)
             x = x.repeat(args.sampling_batch_size, 1, 1)
             # get actor prediction
-            _, y_hat = actor(x)
-            l = util.get_tour_length(x, y_hat)
-            idx = torch.argmin(l)
-            l = l[idx]
-            y_hat = y_hat[idx]
-            if l < l_best:
-                l_best = l.item()
+            for _ in range(args.n_sampling):
+                _, y_hat = actor(x)
+                l = util.get_tour_length(x, y_hat)
+                idx = torch.argmin(l)
+                l = l[idx]
+                y_hat = y_hat[idx]
+                if l < l_best:
+                    l_best = l.item()
             # gather info
             yield l_best
 
