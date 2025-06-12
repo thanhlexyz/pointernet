@@ -122,7 +122,8 @@ class Solver:
         args = self.args
         path = os.path.join(args.model_dir, f'{self.label}.pkl')
         if os.path.exists(path):
-            print(f'[+] loading {path}')
+            if args.verbose:
+                print(f'[+] loading {path}')
             with open(path, 'rb') as fp:
                 data = pickle.load(fp)
             self.actor.load_state_dict(data['actor'])
