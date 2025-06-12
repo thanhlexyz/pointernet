@@ -9,6 +9,6 @@ def create(args):
         dataset.prepare()
         dataloader_dict[mode] = DataLoader(dataset,
                                     batch_size=args.batch_size,
-                                    shuffle=True if mode == 'train' else False,
+                                    shuffle=True,
                                     num_workers=os.cpu_count())
     return dataloader_dict

@@ -17,28 +17,33 @@ def plot_bar(args):
     # scenarios
     args.dataset = 'tsp'
     args.mode = 'test'
-    args.n_node = 5
-    solvers = ['random', 'optimal', 'pretrain', 'sampling']
-    labels, values = [], []
-    for solver,  in it.product(solvers):
-        # assign args
-        args.solver = solver
-        label = f'{args.solver}'
-        # load csv
-        try:
-            y = load(args)
-        except:
-            raise
-        else:
-            labels.append(label)
-            values.append(y)
-    # plt
-    print(labels, values)
-    plt.bar(labels, values)
-    # decorate
-    plt.xlabel('solver')
-    plt.ylabel(f'{args.metric}')
-    plt.tight_layout()
-    # save figure
-    path = os.path.join(args.figure_dir, f'{args.scenario}_{args.metric}_{args.n_node}.jpg')
-    plt.savefig(path)
+    n_nodes = [5, 10]
+    solvers = ['random', 'optimal', 'pretrain', 'sampling', 'active_search']
+    for n_node in n_nodes:
+        args.n_node = n_node
+        labels, values = [], []
+        print(f'[+] {n_node=}')
+        for solver,  in it.product(solvers):
+            # assign args
+            args.solver = solver
+            label = f'{args.solver}'
+            # load csv
+            try:
+                y = load(args)
+            except:
+                pass
+            else:
+                labels.append(label)
+                values.append(y)
+        # plt
+        print(labels, values)
+        plt.bar(labels, values)
+        # decorate
+        plt.xlabel('solver')
+        plt.ylabel(f'{args.metric}')
+        plt.tight_layout()
+        # save figure
+        path = os.path.join(args.figure_dir, f'{args.scenario}_{args.metric}_{args.n_node}.jpg')
+        plt.savefig(path)
+        plt.cla()
+        plt.clf()

@@ -49,30 +49,37 @@ class Solver:
                                       step_size=args.lrs_step_size,
                                       gamma=args.lrs_gamma)
 
+    def test_item(self, item):
+        # extract args
+        args = self.args
+        # extract model
+        actor = self.actor
+        # init
+        l_best = torch.inf
+        # extract data
+        x, y = item.values()
+        x = torch.tensor(x, device=args.device)
+        y = torch.tensor(y, device=args.device)
+        x = x.repeat(args.batch_size, 1, 1)
+        # get actor prediction
+        for _ in range(args.n_sample_step):
+            _, y_hat = actor(x)
+            l = util.get_tour_length(x, y_hat)
+            idx = torch.argmin(l)
+            l = l[idx]
+            y_hat = y_hat[idx]
+            if l < l_best:
+                l_best = l.item()
+        # gather info
+        return l_best
+
     def test_epoch(self):
         # extract args
         args = self.args
         dataset = self.dataloader_dict['test'].dataset
-        # extract model
-        actor = self.actor
         # sampling loop
         for item in tqdm.tqdm(dataset):
-            x, y = item.values()
-            l_best = torch.inf
-            x = torch.tensor(x, device=args.device)
-            y = torch.tensor(y, device=args.device)
-            x = x.repeat(args.sampling_batch_size, 1, 1)
-            # get actor prediction
-            for _ in range(args.n_sampling):
-                _, y_hat = actor(x)
-                l = util.get_tour_length(x, y_hat)
-                idx = torch.argmin(l)
-                l = l[idx]
-                y_hat = y_hat[idx]
-                if l < l_best:
-                    l_best = l.item()
-            # gather info
-            yield l_best
+            yield self.test_item(item)
 
     def test(self):
         # extract args
