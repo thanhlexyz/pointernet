@@ -25,7 +25,8 @@ def get_args():
     parser.add_argument('--n_test_instance', type=int, default=1000)
     parser.add_argument('--dataset', type=str, default='tsp')
     parser.add_argument('--n_input', type=int, default=2)
-    parser.add_argument('--n_node', type=int, default=5)
+    parser.add_argument('--n_node_min', type=int, default=5)
+    parser.add_argument('--n_node_max', type=int, default=10)
     # solver
     parser.add_argument('--solver', type=str, default='pretrain')
     parser.add_argument('--lr', type=float, default=1e-3)
