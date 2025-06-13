@@ -16,14 +16,15 @@ class Glimpse(nn.Module):
     def forward(self, q: torch.Tensor, ref: PackedSequence, mask: torch.Tensor | None = None, inf: float = 1e8) -> torch.Tensor:
         # extract args
         args = self.args
-        # ref: (bs, n_node, n_hidden)
-        ref = torch.nn.utils.rnn.pad_packed_sequence(ref)[0].permute(1, 0, 2)
+        # ref: (bs, n_hidden, n_node)
+        ref = torch.nn.utils.rnn.pad_packed_sequence(ref)[0].permute(1, 2, 0)
+        bs, _, n_node = ref.shape
         # u1: (bs, n_hidden, n_node)
-        u1 = self.W_q(q).unsqueeze(-1).repeat(1, 1, ref.size(1))
+        u1 = self.W_q(q).unsqueeze(-1).repeat(1, 1, n_node)
         # u2: (bs, n_hidden, n_node)
-        u2 = self.W_ref(ref.permute(0, 2, 1))
+        u2 = self.W_ref(ref)
         # v: (bs, 1, n_hidden) * u1+u2: (bs, n_hidden, n_node)
-        v  = self.v.unsqueeze(0).unsqueeze(0).repeat(ref.size(0), 1, 1)
+        v  = self.v.unsqueeze(0).unsqueeze(0).repeat(bs, 1, 1)
         # u: (bs, n_node)
         u = torch.bmm(v, torch.tanh(u1 + u2)).squeeze(1)
         if mask is not None:
