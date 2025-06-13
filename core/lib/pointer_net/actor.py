@@ -55,7 +55,7 @@ class Actor(nn.Module):
         # get actual number of nodes
         _, n_nodes = torch.nn.utils.rnn.pad_packed_sequence(x)
 
-        for _ in range(args.n_node_max):
+        for _ in range(n_node):
             # decode
             _, (h, c) = decoder(z, h, c)
             q = h.squeeze(0)

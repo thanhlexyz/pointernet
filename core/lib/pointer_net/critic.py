@@ -1,6 +1,4 @@
-import torch.nn.functional as F
 import torch.nn as nn
-import torch
 
 from . import module
 
@@ -24,13 +22,12 @@ class Critic(nn.Module):
     def forward(self, x):
         # extract parameters
         args = self.args
-        embedding, glimpse, encoder = self.embedding, self.glimpse, self.encoder
         # init
         x = x.to(args.device)
         # embed
-        e = embedding(x)
+        e = self.embedding(x)
         # encode
-        ref, (h, c) = encoder(e)
+        ref, (h, c) = self.encoder(e)
         q = h[-1]
         for _ in range(args.n_process):
             for _ in range(args.n_glimpse):
