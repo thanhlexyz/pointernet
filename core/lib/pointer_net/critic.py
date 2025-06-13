@@ -24,9 +24,7 @@ class Critic(nn.Module):
     def forward(self, x):
         # extract parameters
         args = self.args
-        bs, n_node, _ = x.size()
-        embedding, glimpse, encoder = \
-            self.embedding, self.glimpse, self.encoder
+        embedding, glimpse, encoder = self.embedding, self.glimpse, self.encoder
         # init
         x = x.to(args.device)
         # embed

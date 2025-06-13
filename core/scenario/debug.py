@@ -15,3 +15,6 @@ def debug(args):
         # get actor prediction
         log_likelihood, y_hat = actor(x)
         print(f'{y_hat=}')
+        l = critic(x)
+        print(f'{l=}')
+        
