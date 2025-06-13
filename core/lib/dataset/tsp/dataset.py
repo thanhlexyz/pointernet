@@ -41,8 +41,6 @@ class Dataset(Dataset):
 
             self.Y = Parallel(n_jobs=os.cpu_count())(delayed(solve_optimal_tsp)(self.X[i])
                                                      for i in tqdm.tqdm(range(n_instance)))
-            # self.X = torch.nn.utils.rnn.pack_sequence(self.X, enforce_sorted=False)
-            # self.Y = torch.nn.utils.rnn.pack_sequence(self.Y, enforce_sorted=False)
             # save data
             data = {'X': self.X, 'Y': self.Y}
             with open(path, 'wb') as fp:

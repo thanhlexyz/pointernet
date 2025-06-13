@@ -27,7 +27,7 @@ class Solver:
     @property
     def label(self):
         args = self.args
-        return f'{args.dataset}_{args.n_node}'
+        return f'{args.dataset}_{args.n_node_min}_{args.n_node_max}'
 
     def create_model(self):
         args = self.args
@@ -60,9 +60,8 @@ class Solver:
         critic, critic_loss_fn, critic_optimizer, critic_scheduler = \
             self.critic, self.critic_loss_fn, self.critic_optimizer, self.critic_scheduler
         # training loop
-        for batch in dataloader:
+        for x, y in dataloader:
             # extract data
-            x, y = batch.values()
             x = x.to(args.device)
             y = y.to(args.device)
             # get actor prediction

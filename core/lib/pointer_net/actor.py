@@ -40,7 +40,7 @@ class Actor(nn.Module):
         # init
         nodes, log_probs = [], []
         mask = torch.zeros([bs, n_node], device=args.device)
-        
+
         x = x.to(args.device)
         embedding, glimpse, encoder, decoder, pointer, search_alg = \
             self.embedding, self.glimpse, self.encoder, self.decoder, \

@@ -48,7 +48,7 @@ class Monitor:
     @property
     def label(self):
         args = self.args
-        label = f'{args.dataset}_{args.n_node}_{args.solver}'
+        label = f'{args.dataset}_{args.n_node_min}_{args.n_node_max}_{args.solver}'
         return label
 
     def __update_csv(self, info):
