@@ -8,7 +8,8 @@ test:
 	python3 main.py --scenario=main --mode=test --solver=active_search
 
 debug:
-	python3 main.py --scenario=debug
+	# python3 main.py --scenario=debug
+	python3 main.py --scenario=debug --n_train_instance 100 --device cpu --n_embed 31 --n_hidden 15 --batch 7
 
 plot:
 	python3 main.py --scenario=plot_line --metric=actor_loss & \

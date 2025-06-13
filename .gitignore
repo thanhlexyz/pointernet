@@ -5,3 +5,4 @@ resource/
 
 .vscode/
 venv/
+.cursor/
