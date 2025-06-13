@@ -1,5 +1,6 @@
 import torch.nn as nn
 import torch
+from torch.nn.utils.rnn import PackedSequence
 
 class Decoder(nn.Module):
 
@@ -11,14 +12,16 @@ class Decoder(nn.Module):
                              batch_first=True, device=args.device)
         self.g = nn.Parameter(torch.FloatTensor(args.n_embed).to(args.device))
 
-    def get_z0(self, x):
-        bs, _, _ = x.size()
+    def get_z0(self, x: PackedSequence) -> torch.Tensor:
+        bs = x.unsorted_indices.numel()
         args = self.args
         z0 = self.g.unsqueeze(0).repeat(bs, 1).unsqueeze(1).to(args.device)
         return z0
 
-    def gather_z(self, e, next_node):
+    def gather_z(self, e: PackedSequence, next_node: torch.Tensor) -> torch.Tensor:
         args = self.args
+        # e: (bs, n_node, n_embed)
+        e = torch.nn.utils.rnn.pad_packed_sequence(e)[0].permute(1, 0, 2)
         index = next_node.unsqueeze(-1).unsqueeze(-1).repeat(1, 1, args.n_embed)
         z = torch.gather(e, dim=1, index=index)
         return z

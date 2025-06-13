@@ -1,5 +1,6 @@
 import torch.nn as nn
 import torch
+from torch.nn.utils.rnn import PackedSequence
 
 class Glimpse(nn.Module):
 
@@ -12,9 +13,11 @@ class Glimpse(nn.Module):
         self.W_q = nn.Linear(args.n_hidden, args.n_hidden,
                              bias=True, device=args.device)
 
-    def forward(self, q, ref, mask=None, inf=1e8):
+    def forward(self, q: torch.Tensor, ref: PackedSequence, mask=None, inf=1e8):
         # extract args
         args = self.args
+        # ref: (bs, n_node, n_hidden)
+        ref = torch.nn.utils.rnn.pad_packed_sequence(ref)[0].permute(1, 0, 2)
         # u1: (bs, n_hidden, n_node)
         u1 = self.W_q(q).unsqueeze(-1).repeat(1, 1, ref.size(1))
         # u2: (bs, n_hidden, n_node)

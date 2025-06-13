@@ -36,9 +36,11 @@ class Actor(nn.Module):
         # extract parameters
         args = self.args
         bs = x.unsorted_indices.numel()
+        n_node = len(x.batch_sizes)
         # init
         nodes, log_probs = [], []
-        mask = torch.zeros([bs, args.n_node_max], device=args.device)
+        mask = torch.zeros([bs, n_node], device=args.device)
+        
         x = x.to(args.device)
         embedding, glimpse, encoder, decoder, pointer, search_alg = \
             self.embedding, self.glimpse, self.encoder, self.decoder, \
@@ -49,12 +51,12 @@ class Actor(nn.Module):
         ref, (h, c) = encoder(e)
         # decode loop
         z = decoder.get_z0(x)
-        for i in range(n_node):
+        for _ in range(args.n_node_max):
             # decode
             _, (h, c) = decoder(z, h, c)
             q = h.squeeze(0)
             # glimpse
-            for i in range(args.n_glimpse):
+            for _ in range(args.n_glimpse):
                 q = glimpse(q, ref, mask)
             # pointer
             logits   = pointer(q, ref, mask)

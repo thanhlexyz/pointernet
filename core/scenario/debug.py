@@ -14,4 +14,4 @@ def debug(args):
         x = x.to(args.device)
         # get actor prediction
         log_likelihood, y_hat = actor(x)
-        print(y_hat)
+        print(f'{y_hat=}')

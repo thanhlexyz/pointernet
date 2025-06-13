@@ -1,5 +1,6 @@
 import torch.nn as nn
 import torch
+from torch.nn.utils.rnn import PackedSequence
 
 class Encoder(nn.Module):
 
@@ -9,6 +10,6 @@ class Encoder(nn.Module):
                              hidden_size=args.n_hidden,
                              batch_first=True, device=args.device)
 
-    def forward(self, e):
+    def forward(self, e: PackedSequence) -> PackedSequence:
         z, (h, c) = self.layer(e, None)
         return z, (h, c)
