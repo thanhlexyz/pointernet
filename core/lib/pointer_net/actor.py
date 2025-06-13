@@ -51,6 +51,10 @@ class Actor(nn.Module):
         ref, (h, c) = encoder(e)
         # decode loop
         z = decoder.get_z0(x)
+        
+        # get actual number of nodes
+        _, n_nodes = torch.nn.utils.rnn.pad_packed_sequence(x)
+        
         for _ in range(args.n_node_max):
             # decode
             _, (h, c) = decoder(z, h, c)
@@ -71,6 +75,11 @@ class Actor(nn.Module):
             mask += torch.zeros((bs, n_node), device=args.device).\
                     scatter_(dim=1, index=next_node.unsqueeze(1), value=1)
         log_probs = torch.stack(log_probs, dim=1)
+        # stack padded nodes
         nodes = torch.stack(nodes, dim=1)
         log_likelihoods = self.get_log_likelihood(log_probs, nodes)
+        
+        # pack nodes
+        nodes = [node[:n_nodes[i]] for i, node in enumerate(nodes)]
+        nodes = torch.nn.utils.rnn.pack_sequence(nodes, enforce_sorted=False)
         return log_likelihoods, nodes
