@@ -1,5 +1,6 @@
 import itertools as it
 import numpy as np
+import torch
 
 def solve_optimal_tsp(points):
     """
@@ -27,4 +28,4 @@ def solve_optimal_tsp(points):
                                  for k in S if k != 0 and k != j])
         A = B
     res = min([(A[d][0] + all_distances[0][d[1]], A[d][1]) for d in iter(A)])
-    return np.asarray(res[1])
+    return torch.tensor(res[1])

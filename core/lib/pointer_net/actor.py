@@ -35,10 +35,10 @@ class Actor(nn.Module):
     def forward(self, x):
         # extract parameters
         args = self.args
-        bs, n_node, _ = x.size()
+        bs = x.unsorted_indices.numel()
         # init
         nodes, log_probs = [], []
-        mask = torch.zeros([bs, n_node], device=args.device)
+        mask = torch.zeros([bs, args.n_node_max], device=args.device)
         x = x.to(args.device)
         embedding, glimpse, encoder, decoder, pointer, search_alg = \
             self.embedding, self.glimpse, self.encoder, self.decoder, \

@@ -1,6 +1,7 @@
 from torch.utils.data import Dataset
 from joblib import Parallel, delayed
 import numpy as np
+import pickle
 import torch
 import time
 import tqdm
@@ -20,10 +21,11 @@ class Dataset(Dataset):
         args = self.args
         # check if data exists
         n_instance = eval(f'args.n_{self.mode}_instance')
-        label = f'{args.dataset}_{self.mode}_{args.n_node_min}_{args.n_node_max}_{n_instance}.npz'
+        label = f'{args.dataset}_{self.mode}_{args.n_node_min}_{args.n_node_max}_{n_instance}.pkl'
         path = os.path.join(args.dataset_dir, label)
         if os.path.exists(path):
-            data   = np.load(path)
+            with open(path, 'rb') as fp:
+                data = pickle.load(fp)
             self.X = data['X']
             self.Y = data['Y']
             if args.verbose:
@@ -33,29 +35,21 @@ class Dataset(Dataset):
             print(f'[+] preparing {label}')
             tic = time.time()
             # need to rand from n_node_min to n_node_max, use packed sequence from torch.nn.utils.rnn
-            n_nodes = np.random.randint(args.n_node_min, args.n_node_max + 1, size=(n_instance,))
-            self.X = torch.nn.utils.rnn.pack_sequence(
-                [torch.rand(n_nodes[i], 2) for i in range(n_instance)], 
-                enforce_sorted=False,
-            )
-            # print(self.X)
-            for i, x in enumerate(self.X):
-                print(i, x.shape, torch.rand(n_nodes[i], 2).shape)
-            exit()
+            n_nodes = torch.randint(args.n_node_min, args.n_node_max + 1, size=(n_instance,))
+            self.X = [torch.rand(n_nodes[i], 2) for i in range(n_instance)]
             # use delayed parallel to solve optimal tsp
-            self.Y = torch.nn.utils.rnn.pack_sequence(
-                Parallel(n_jobs=os.cpu_count())(
-                    delayed(solve_optimal_tsp)(self.X[i, :n_nodes[i]]) 
-                        for i in tqdm.tqdm(range(n_instance))
-                )
-            )
-            
-            np.savez_compressed(path, X=self.X, Y=self.Y)
+
+            self.Y = Parallel(n_jobs=os.cpu_count())(delayed(solve_optimal_tsp)(self.X[i])
+                                                     for i in tqdm.tqdm(range(n_instance)))
+            # self.X = torch.nn.utils.rnn.pack_sequence(self.X, enforce_sorted=False)
+            # self.Y = torch.nn.utils.rnn.pack_sequence(self.Y, enforce_sorted=False)
+            # save data
+            data = {'X': self.X, 'Y': self.Y}
+            with open(path, 'wb') as fp:
+                pickle.dump(data, fp, protocol=pickle.HIGHEST_PROTOCOL)
             toc = time.time()
             dt  = toc - tic
             print(f'    - saved {path=} {dt=:0.1f} (s)')
-        # convert from double to float
-        self.X = self.X.astype(np.float32)
 
     def __len__(self):
         return len(self.X)
@@ -63,10 +57,3 @@ class Dataset(Dataset):
     def __getitem__(self, i):
         sample = {'x': self.X[i], 'y': self.Y[i]}
         return sample
-
-
-if __name__ == '__main__':
-    from util import get_args
-    args = get_args()
-    dataset = Dataset('train', args)
-    dataset.prepare()
