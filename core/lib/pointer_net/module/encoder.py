@@ -1,6 +1,7 @@
+from torch.nn.utils.rnn import PackedSequence
+from beartype import beartype
 import torch.nn as nn
 import torch
-from torch.nn.utils.rnn import PackedSequence
 
 class Encoder(nn.Module):
 
@@ -8,8 +9,10 @@ class Encoder(nn.Module):
         super().__init__()
         self.layer = nn.LSTM(input_size=args.n_embed,
                              hidden_size=args.n_hidden,
-                             batch_first=True, device=args.device)
+                             batch_first=True, 
+                             device=args.device)
 
-    def forward(self, e: PackedSequence) -> PackedSequence:
+    @beartype
+    def forward(self, e: PackedSequence) -> tuple[PackedSequence, tuple[torch.Tensor, torch.Tensor]]:
         z, (h, c) = self.layer(e, None)
         return z, (h, c)

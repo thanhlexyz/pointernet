@@ -1,6 +1,7 @@
+from torch.nn.utils.rnn import PackedSequence
+from beartype import beartype
 import torch.nn as nn
 import torch
-from torch.nn.utils.rnn import PackedSequence
 
 class Pointer(nn.Module):
 
@@ -13,7 +14,8 @@ class Pointer(nn.Module):
         self.W_q = nn.Linear(args.n_hidden, args.n_hidden,
                              bias=True, device=args.device)
 
-    def forward(self, q: torch.Tensor, ref: PackedSequence, mask: torch.Tensor, inf=1e8) -> torch.Tensor:
+    @beartype
+    def forward(self, q: torch.Tensor, ref: PackedSequence, mask: torch.Tensor, inf: float = 1e8) -> torch.Tensor:
         args = self.args
         # ref: (bs, n_node, n_hidden)
         ref = torch.nn.utils.rnn.pad_packed_sequence(ref)[0].permute(1, 0, 2)

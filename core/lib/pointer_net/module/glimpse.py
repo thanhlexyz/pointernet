@@ -1,6 +1,7 @@
+from torch.nn.utils.rnn import PackedSequence
+from beartype import beartype
 import torch.nn as nn
 import torch
-from torch.nn.utils.rnn import PackedSequence
 
 class Glimpse(nn.Module):
 
@@ -8,12 +9,11 @@ class Glimpse(nn.Module):
         super().__init__()
         self.args = args
         self.v = nn.Parameter(torch.FloatTensor(args.n_hidden).to(args.device))
-        self.W_ref = nn.Conv1d(args.n_hidden, args.n_hidden, 1, 1,
-                               device=args.device)
-        self.W_q = nn.Linear(args.n_hidden, args.n_hidden,
-                             bias=True, device=args.device)
+        self.W_ref = nn.Conv1d(args.n_hidden, args.n_hidden, 1, 1, device=args.device)
+        self.W_q = nn.Linear(args.n_hidden, args.n_hidden, bias=True, device=args.device)
 
-    def forward(self, q: torch.Tensor, ref: PackedSequence, mask=None, inf=1e8):
+    @beartype
+    def forward(self, q: torch.Tensor, ref: PackedSequence, mask: torch.Tensor | None = None, inf: float = 1e8) -> torch.Tensor:
         # extract args
         args = self.args
         # ref: (bs, n_node, n_hidden)

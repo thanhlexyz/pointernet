@@ -17,4 +17,5 @@ def debug(args):
         print(f'{y_hat=}')
         l = critic(x)
         print(f'{l=}')
+        exit()
         

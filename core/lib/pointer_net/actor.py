@@ -1,3 +1,5 @@
+from torch.nn.utils.rnn import PackedSequence
+from beartype import beartype
 import torch.nn as nn
 import torch
 
@@ -21,7 +23,8 @@ class Actor(nn.Module):
         for p in self.parameters():
             nn.init.uniform_(p.data, -0.08, 0.08)
 
-    def get_log_likelihood(self, log_probs, nodes):
+    @beartype
+    def get_log_likelihood(self, log_probs: torch.Tensor, nodes: torch.Tensor) -> torch.Tensor:
         # log_probs: (bs, n_node, n_node)
         # nodes: (bs, n_node)
         # return: (bs)
@@ -29,7 +32,8 @@ class Actor(nn.Module):
         ll = torch.sum(ll.squeeze(-1), 1)
         return ll
 
-    def forward(self, x):
+    @beartype
+    def forward(self, x: PackedSequence) -> tuple[torch.Tensor, PackedSequence]:
         # extract parameters
         args = self.args
         bs = x.unsorted_indices.numel()
