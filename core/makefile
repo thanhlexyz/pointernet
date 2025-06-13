@@ -5,7 +5,7 @@ train:
 	python3 main.py --scenario=main --mode=train --solver=pretrain --n_node_min=5 --n_node_max=5
 
 test:
-	python3 main.py --scenario=main --mode=test --solver=active_search --n_node=5
+	python3 main.py --scenario=main --mode=test --solver=active_search
 
 debug:
 	python3 main.py --scenario=debug

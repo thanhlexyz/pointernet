@@ -1,7 +1,6 @@
 import torch.nn as nn
 import torch
 
-from . import search_alg
 from . import module
 
 class Actor(nn.Module):
@@ -17,8 +16,6 @@ class Actor(nn.Module):
         self.decoder   = module.Decoder(args)
         self.pointer   = module.Pointer(args)
         self.init_weight()
-        # search_alg
-        self.search_alg = search_alg.create(args)
 
     def init_weight(self):
         for p in self.parameters():
@@ -42,19 +39,18 @@ class Actor(nn.Module):
         mask = torch.zeros([bs, n_node], device=args.device)
 
         x = x.to(args.device)
-        embedding, glimpse, encoder, decoder, pointer, search_alg = \
-            self.embedding, self.glimpse, self.encoder, self.decoder, \
-            self.pointer, self.search_alg
+        embedding, glimpse, encoder, decoder, pointer = \
+            self.embedding, self.glimpse, self.encoder, self.decoder, self.pointer
         # embed
         e = embedding(x)
         # encode
         ref, (h, c) = encoder(e)
         # decode loop
         z = decoder.get_z0(x)
-        
+
         # get actual number of nodes
         _, n_nodes = torch.nn.utils.rnn.pad_packed_sequence(x)
-        
+
         for _ in range(args.n_node_max):
             # decode
             _, (h, c) = decoder(z, h, c)
@@ -66,7 +62,7 @@ class Actor(nn.Module):
             logits   = pointer(q, ref, mask)
             log_prob = torch.log_softmax(logits, dim=-1)
             # select next node
-            next_node = self.search_alg(log_prob) # (bs, )
+            next_node = torch.argmax(log_prob, dim=1).long()
             z = decoder.gather_z(e, next_node)
             # store decoding results
             nodes.append(next_node)
@@ -78,7 +74,7 @@ class Actor(nn.Module):
         # stack padded nodes
         nodes = torch.stack(nodes, dim=1)
         log_likelihoods = self.get_log_likelihood(log_probs, nodes)
-        
+
         # pack nodes
         nodes = [node[:n_nodes[i]] for i, node in enumerate(nodes)]
         nodes = torch.nn.utils.rnn.pack_sequence(nodes, enforce_sorted=False)
