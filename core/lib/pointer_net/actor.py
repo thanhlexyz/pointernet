@@ -43,31 +43,29 @@ class Actor(nn.Module):
         mask = torch.zeros([bs, n_node], device=args.device)
 
         x = x.to(args.device)
-        embedding, glimpse, encoder, decoder, pointer = \
-            self.embedding, self.glimpse, self.encoder, self.decoder, self.pointer
         # embed
-        e = embedding(x)
+        e = self.embedding(x)
         # encode
-        ref, (h, c) = encoder(e)
+        ref, (h, c) = self.encoder(e)
         # decode loop
-        z = decoder.get_z0(x)
+        z = self.decoder.get_z0(x)
 
         # get actual number of nodes
         _, n_nodes = torch.nn.utils.rnn.pad_packed_sequence(x)
 
         for _ in range(n_node):
             # decode
-            _, (h, c) = decoder(z, h, c)
+            _, (h, c) = self.decoder(z, h, c)
             q = h.squeeze(0)
             # glimpse
             for _ in range(args.n_glimpse):
-                q = glimpse(q, ref, mask)
+                q = self.glimpse(q, ref, mask)
             # pointer
-            logits   = pointer(q, ref, mask)
+            logits   = self.pointer(q, ref, mask)
             log_prob = torch.log_softmax(logits, dim=-1)
             # select next node
             next_node = torch.argmax(log_prob, dim=1).long()
-            z = decoder.gather_z(e, next_node)
+            z = self.decoder.gather_z(e, next_node)
             # store decoding results
             nodes.append(next_node)
             log_probs.append(log_prob)
