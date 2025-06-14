@@ -11,13 +11,13 @@ def collate_fn(items):
 
 def create(args):
     dataloader_dict = {}
-    for mode in ['train', 'test']:
-        dataset = eval(args.dataset).Dataset(mode, args)
-        dataset.prepare()
-        dataloader_dict[mode] = DataLoader(dataset,
-                                    batch_size=args.batch_size,
-                                    shuffle=True,
-                                    collate_fn=collate_fn,
-                                    # num_workers=os.cpu_count())
-                                    num_workers=1)
+    mode = args.mode
+    dataset = eval(args.dataset).Dataset(mode, args)
+    dataset.prepare()
+    dataloader_dict[mode] = DataLoader(dataset,
+                                batch_size=args.batch_size,
+                                shuffle=True,
+                                collate_fn=collate_fn,
+                                # num_workers=os.cpu_count())
+                                num_workers=1)
     return dataloader_dict

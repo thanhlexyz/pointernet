@@ -27,7 +27,7 @@ class Solver:
     @property
     def label(self):
         args = self.args
-        return f'{args.dataset}_{args.n_node}'
+        return f'{args.dataset}_{args.n_node_min}_{args.n_node_max}'
 
     def create_model(self):
         args = self.args

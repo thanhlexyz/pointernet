@@ -27,7 +27,7 @@ class Solver:
     @property
     def label(self):
         args = self.args
-        return f'{args.dataset}_{args.n_node}'
+        return f'{args.dataset}_{args.n_node_min}_{args.n_node_max}'
 
     def create_model(self):
         args = self.args
@@ -60,7 +60,12 @@ class Solver:
         x, y = item.values()
         x = torch.tensor(x, device=args.device)
         y = torch.tensor(y, device=args.device)
-        x = x.repeat(args.batch_size, 1, 1)
+        # x = x.repeat(args.batch_size, 1, 1)
+        print(f'{x.shape=} {y.shape=}')
+        
+        x = torch.nn.utils.rnn.pack_padded_sequence(x, [len(x)], enforce_sorted=False)
+        y = torch.nn.utils.rnn.pack_padded_sequence(y, [len(y)], enforce_sorted=False)
+        
         # get actor prediction
         for _ in range(args.n_sample_step):
             _, y_hat = actor(x)

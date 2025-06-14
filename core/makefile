@@ -1,5 +1,5 @@
 N_NODE_MIN=5
-N_NODE_MAX=5
+N_NODE_MAX=10
 
 all: train plot
 
@@ -7,11 +7,11 @@ train:
 	python3 main.py --scenario=main --mode=train --solver=pretrain --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX)
 
 test:
-	python3 main.py --scenario=main --mode=test --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX) --solver=random
-	python3 main.py --scenario=main --mode=test --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX) --solver=optimal
-	python3 main.py --scenario=main --mode=test --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX) --solver=sampling
-	python3 main.py --scenario=main --mode=test --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX) --solver=pretrain
 	python3 main.py --scenario=main --mode=test --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX) --solver=active_search
+	# python3 main.py --scenario=main --mode=test --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX) --solver=pretrain
+	# python3 main.py --scenario=main --mode=test --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX) --solver=sampling
+	# python3 main.py --scenario=main --mode=test --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX) --solver=random
+	# python3 main.py --scenario=main --mode=test --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX) --solver=optimal
 
 debug:
 	python3 main.py --scenario=debug --n_train_instance 100 --device cpu --n_embed 31 --n_hidden 15 --batch 7 --n_node_max=$(N_NODE_MAX) --n_node_min=$(N_NODE_MIN)

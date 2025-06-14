@@ -125,9 +125,8 @@ class Solver:
         # extract model
         actor = self.actor
         # training loop
-        for batch in dataloader:
+        for x, y in dataloader:
             # extract data
-            x, _ = batch.values()
             x = x.to(args.device)
             # get actor prediction
             _, y_hat = actor(x)
