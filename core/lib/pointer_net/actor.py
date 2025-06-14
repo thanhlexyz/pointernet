@@ -25,8 +25,8 @@ class Actor(nn.Module):
 
     @beartype
     def get_log_likelihood(self, log_probs: torch.Tensor, nodes: torch.Tensor) -> torch.Tensor:
-        # log_probs: (bs, n_node, n_node)
-        # nodes: (bs, n_node)
+        # log_probs: (bs, max_node, max_node)
+        # nodes: (bs, max_node)
         # return: (bs)
         ll = torch.gather(log_probs, dim=2, index=nodes[:, :, None])
         ll = torch.sum(ll.squeeze(-1), 1)
@@ -37,10 +37,10 @@ class Actor(nn.Module):
         # extract parameters
         args = self.args
         bs = x.unsorted_indices.numel()
-        n_node = len(x.batch_sizes)
+        max_node = len(x.batch_sizes)
         # init
         nodes, log_probs = [], []
-        mask = torch.zeros([bs, n_node], device=args.device)
+        mask = torch.zeros([bs, max_node], device=args.device)
 
         x = x.to(args.device)
         # embed
@@ -52,8 +52,12 @@ class Actor(nn.Module):
 
         # get actual number of nodes
         _, n_nodes = torch.nn.utils.rnn.pad_packed_sequence(x)
+        
+        # fill mask with 1 for padding
+        for b in range(bs):
+            mask[b, n_nodes[b]:] = 1.0
 
-        for _ in range(n_node):
+        for _ in range(max_node):
             # decode
             _, (h, c) = self.decoder(z, h, c)
             q = h.squeeze(0)
@@ -70,7 +74,7 @@ class Actor(nn.Module):
             nodes.append(next_node)
             log_probs.append(log_prob)
             # update mask
-            mask += torch.zeros((bs, n_node), device=args.device).\
+            mask += torch.zeros((bs, max_node), device=args.device).\
                     scatter_(dim=1, index=next_node.unsqueeze(1), value=1)
         log_probs = torch.stack(log_probs, dim=1)
         # stack padded nodes
