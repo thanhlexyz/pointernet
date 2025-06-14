@@ -1,10 +1,10 @@
 N_NODE_MIN=5
-N_NODE_MAX=10
+N_NODE_MAX=5
 
 all: train plot
 
 train:
-	python3 main.py --scenario=main --mode=train --solver=pretrain --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX) --n_logging=10
+	python3 main.py --scenario=main --mode=train --solver=pretrain --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX)
 
 test:
 	python3 main.py --scenario=main --mode=test --n_node_min=$(N_NODE_MIN) --n_node_max=$(N_NODE_MAX) --solver=random
