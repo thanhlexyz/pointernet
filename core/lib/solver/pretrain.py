@@ -1,18 +1,17 @@
-from torch.utils.data import DataLoader
 import torch.optim as optim
 import torch.nn as nn
 import numpy as np
 import pickle
 import torch
-import time
-import tqdm
+import math
 import os
 
 import lib.util as util
 import lib
 
+from .base import SolverBase
 
-class Solver:
+class Solver(SolverBase):
 
     def __init__(self, args):
         # save args
@@ -23,33 +22,6 @@ class Solver:
         self.create_model()
         # load monitor
         self.monitor = lib.Monitor(args)
-
-    @property
-    def label(self):
-        args = self.args
-        return f'{args.dataset}_{args.n_node_min}_{args.n_node_max}'
-
-    def create_model(self):
-        args = self.args
-        self.actor  = lib.pointer_net.Actor(args)
-        self.critic = lib.pointer_net.Critic(args)
-        self.critic_loss_fn = torch.nn.MSELoss()
-        self.actor_optimizer = \
-            optim.Adam(filter(lambda p: p.requires_grad, self.actor.parameters()),
-                       lr=args.lr)
-        self.actor_scheduler = \
-            optim.lr_scheduler.StepLR(self.actor_optimizer,
-                                      step_size=args.lrs_step_size,
-                                      gamma=args.lrs_gamma)
-        self.critic_optimizer = \
-            optim.Adam(filter(lambda p: p.requires_grad, self.critic.parameters()),
-                       lr=args.lr)
-        self.critic_scheduler = \
-            optim.lr_scheduler.StepLR(self.critic_optimizer,
-                                      step_size=args.lrs_step_size,
-                                      gamma=args.lrs_gamma)
-        if args.load_state_dict:
-            self.load_model()
 
     def train_epoch(self):
         # extract args
@@ -132,19 +104,21 @@ class Solver:
             _, y_hat = actor(x)
             l = util.get_tour_length(x, y_hat)
             # gather info
-            yield l
+            yield l.detach().cpu().numpy()
 
     def test(self):
         # extract args
+        args = self.args
         monitor = self.monitor
+        monitor.create_progress_bar(math.ceil(args.n_test_instance / args.batch_size))
+        args.n_logging = 1
         self.load_model()
         self.actor.eval()
         ls = []
         for l in self.test_epoch():
-            ls.append(l)
-        ls = torch.cat(ls).detach().cpu().numpy()
-        info = {'avg_tour_length': np.mean(ls)}
-        monitor.step(info)
+            ls.extend(l.tolist())
+            info = {'avg_tour_length': np.mean(ls)}
+            monitor.step(info)
         monitor.export_csv(mode='test')
 
     def save_model(self):
@@ -156,15 +130,3 @@ class Solver:
         with open(path, 'wb') as fp:
             pickle.dump(data, fp, protocol=pickle.HIGHEST_PROTOCOL)
             print(f'[+] saved at {self.step=} {path=}')
-
-    def load_model(self):
-        args = self.args
-        path = os.path.join(args.model_dir, f'{self.label}.pkl')
-        if os.path.exists(path):
-            print(f'[+] loading {path}')
-            with open(path, 'rb') as fp:
-                data = pickle.load(fp)
-            self.actor.load_state_dict(data['actor'])
-            self.critic.load_state_dict(data['critic'])
-            self.actor.eval()
-            self.critic.eval()

@@ -1,18 +1,11 @@
-from torch.utils.data import DataLoader
-import torch.optim as optim
-import torch.nn as nn
-import numpy as np
-import pickle
 import torch
-import time
-import tqdm
-import os
+import math
 
 import lib.util as util
 import lib
+from .base import SolverBase
 
-
-class Solver:
+class Solver(SolverBase):
 
     def __init__(self, args):
         # save args
@@ -21,6 +14,8 @@ class Solver:
         self.dataloader_dict = lib.dataset.create(args)
         # load monitor
         self.monitor = lib.Monitor(args)
+        # n_test
+        self.n_test = math.ceil(args.n_test_instance / args.batch_size)
 
     def test_epoch(self):
         # extract args
@@ -38,16 +33,5 @@ class Solver:
             y_hat = torch.nn.utils.rnn.pack_sequence(y_hat, enforce_sorted=False)
             l = util.get_tour_length(x, y_hat)
             # gather info
-            yield l
+            yield l.detach().cpu().numpy().tolist()
 
-    def test(self):
-        # extract args
-        args = self.args
-        monitor = self.monitor
-        ls = []
-        for l in self.test_epoch():
-            ls.append(l)
-        ls = torch.cat(ls).detach().cpu().numpy()
-        info = {'avg_tour_length': np.mean(ls)}
-        monitor.step(info)
-        monitor.export_csv(mode='test')
