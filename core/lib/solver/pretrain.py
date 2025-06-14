@@ -41,8 +41,9 @@ class Solver:
             optim.lr_scheduler.StepLR(self.actor_optimizer,
                                       step_size=args.lrs_step_size,
                                       gamma=args.lrs_gamma)
-        self.critic_optimizer = optim.Adam(filter(lambda p: p.requires_grad, self.critic.parameters()),
-                                          lr=args.lr)
+        self.critic_optimizer = \
+            optim.Adam(filter(lambda p: p.requires_grad, self.critic.parameters()),
+                       lr=args.lr)
         self.critic_scheduler = \
             optim.lr_scheduler.StepLR(self.critic_optimizer,
                                       step_size=args.lrs_step_size,
