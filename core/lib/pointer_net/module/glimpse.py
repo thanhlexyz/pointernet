@@ -1,4 +1,4 @@
-from torch.nn.utils.rnn import PackedSequence
+from torch.nn.utils.rnn import PackedSequence, pad_packed_sequence
 from beartype import beartype
 import torch.nn as nn
 import torch
@@ -17,7 +17,7 @@ class Glimpse(nn.Module):
         # extract args
         args = self.args
         # ref: (bs, n_hidden, n_node)
-        ref = torch.nn.utils.rnn.pad_packed_sequence(ref)[0].permute(1, 2, 0)
+        ref = pad_packed_sequence(ref)[0].permute(1, 2, 0)
         bs, _, n_node = ref.shape
         # u1: (bs, n_hidden, n_node)
         u1 = self.W_q(q).unsqueeze(-1).repeat(1, 1, n_node)
