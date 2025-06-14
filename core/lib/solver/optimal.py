@@ -27,9 +27,8 @@ class Solver:
         args = self.args
         dataloader = self.dataloader_dict['test']
         # training loop
-        for batch in dataloader:
+        for x, y in dataloader:
             # extract data
-            x, y = batch.values()
             x = x.to(args.device)
             y = y.to(args.device)
             l = util.get_tour_length(x, y)

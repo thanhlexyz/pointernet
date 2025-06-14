@@ -1,6 +1,8 @@
-import torch
 from torch.nn.utils.rnn import PackedSequence
+from beartype import beartype
+import torch
 
+@beartype
 def get_tour_length(x_packed: PackedSequence, y_packed: PackedSequence) -> torch.Tensor:
     # x: (bs, n_node, 2)
     # y: (bs, n_node)

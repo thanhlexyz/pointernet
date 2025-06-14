@@ -27,11 +27,15 @@ class Solver:
         args = self.args
         dataloader = self.dataloader_dict['test']
         # training loop
-        for batch in dataloader:
+        for x, _ in dataloader:
             # extract data
-            x, _ = batch.values()
             x = x.to(args.device)
-            y_hat = torch.randperm(args.n_node)
+            bs = x.unsorted_indices.numel()
+            y_hat = []
+            _, N = torch.nn.utils.rnn.pad_packed_sequence(x, batch_first=True)
+            for i in range(bs):
+                y_hat.append(torch.randperm(N[i]))
+            y_hat = torch.nn.utils.rnn.pack_sequence(y_hat, enforce_sorted=False)
             l = util.get_tour_length(x, y_hat)
             # gather info
             yield l
