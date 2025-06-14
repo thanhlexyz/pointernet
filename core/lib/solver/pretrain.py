@@ -69,7 +69,7 @@ class Solver:
             log_likelihood, y_hat = actor(x)
             # optimize critic
             l = util.get_tour_length(x, y_hat)
-            l_hat = self.critic(x)
+            l_hat = critic(x)
             critic_loss = critic_loss_fn(l_hat, l.detach())
             critic_optimizer.zero_grad()
             critic_loss.backward()
@@ -137,7 +137,6 @@ class Solver:
 
     def test(self):
         # extract args
-        args = self.args
         monitor = self.monitor
         self.load_model()
         self.actor.eval()
@@ -151,7 +150,6 @@ class Solver:
 
     def save_model(self):
         args = self.args
-        state_dict = self.actor.state_dict()
         # save model
         path = os.path.join(args.model_dir, f'{self.label}.pkl')
         data = {'actor': self.actor.state_dict(),

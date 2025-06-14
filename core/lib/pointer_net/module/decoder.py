@@ -1,4 +1,4 @@
-from torch.nn.utils.rnn import PackedSequence
+from torch.nn.utils.rnn import PackedSequence, pad_packed_sequence
 from beartype import beartype
 import torch.nn as nn
 import torch
@@ -25,7 +25,7 @@ class Decoder(nn.Module):
     def gather_z(self, e: PackedSequence, next_node: torch.Tensor) -> torch.Tensor:
         args = self.args
         # e: (bs, n_node, n_embed)
-        padded_e = torch.nn.utils.rnn.pad_packed_sequence(e)[0].permute(1, 0, 2)
+        padded_e = pad_packed_sequence(e, batch_first=True)[0]
         index = next_node.unsqueeze(-1).unsqueeze(-1).repeat(1, 1, args.n_embed)
         z = torch.gather(padded_e, dim=1, index=index)
         return z

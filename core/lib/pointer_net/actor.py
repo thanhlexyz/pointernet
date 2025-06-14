@@ -1,4 +1,4 @@
-from torch.nn.utils.rnn import PackedSequence
+from torch.nn.utils.rnn import PackedSequence, pad_packed_sequence
 from beartype import beartype
 import torch.nn as nn
 import torch
@@ -51,7 +51,7 @@ class Actor(nn.Module):
         z = self.decoder.get_z0(x)
 
         # get actual number of nodes
-        _, n_nodes = torch.nn.utils.rnn.pad_packed_sequence(x)
+        _, n_nodes = pad_packed_sequence(x)
         
         # fill mask with 1 for padding
         for b in range(bs):
@@ -65,7 +65,8 @@ class Actor(nn.Module):
             for _ in range(args.n_glimpse):
                 q = self.glimpse(q, ref, mask)
             # pointer
-            logits   = self.pointer(q, ref, mask)
+            logits = self.pointer(q, ref, mask)
+            # logits: (bs, max_node)
             log_prob = torch.log_softmax(logits, dim=-1)
             # select next node
             next_node = torch.argmax(log_prob, dim=1).long()
