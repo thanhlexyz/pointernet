@@ -22,4 +22,4 @@ plot:
 	wait
 
 prepare:
-	python3 main.py --scenario=prepare
+	python3 main.py --scenario=prepare --dataset=tsp_adj_matrix
