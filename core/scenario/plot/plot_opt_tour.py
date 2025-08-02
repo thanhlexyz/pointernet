@@ -19,12 +19,12 @@ def plot_instance(x, y):
 
 def plot_opt_tour(args):
     # create dataset
-    dataset = lib.create_dataset(args)
-    dataset.prepare()
+    loader = lib.dataset.create(args)
+    dataset = loader['test'].dataset
     # extract one example
     x, y = dataset.X[0], dataset.Y[0]
     plot_instance(x, y)
     # save figure
-    path = os.path.join(args.figure_dir, f'{args.scenario}_{args.dataset}_{args.n_node}.pdf')
+    path = os.path.join(args.figure_dir, f'{args.scenario}_{args.dataset}_{args.n_node}.jpg')
     plt.savefig(path)
     print(f'    - saved plot at {path=}')

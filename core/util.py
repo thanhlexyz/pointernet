@@ -48,7 +48,7 @@ def get_args():
     parser.add_argument('--n_beam', type=int, default=3)
     # data directory
     parser.add_argument('--dataset_dir', type=str, default='../data/dataset')
-    parser.add_argument('--figure_dir', type=str, default='../data/figure')
+    parser.add_argument('--figure_dir', type=str, default='../figure')
     parser.add_argument('--model_dir', type=str, default='../data/model')
     parser.add_argument('--csv_dir', type=str, default='../data/csv')
     # plot

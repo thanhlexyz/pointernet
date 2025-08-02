@@ -1,5 +1,5 @@
 from torch.utils.data import DataLoader
-from . import tsp, tsp_adj_matrix
+from . import tsp
 import os
 
 def create(args):
