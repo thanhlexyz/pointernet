@@ -43,9 +43,6 @@ def get_args():
     parser.add_argument('--n_glimpse', type=int, default=1)
     parser.add_argument('--n_hidden', type=int, default=128)
     parser.add_argument('--n_embed', type=int, default=128)
-    # search parameters
-    parser.add_argument('--search_alg', type=str, default='greedy')
-    parser.add_argument('--n_beam', type=int, default=3)
     # data directory
     parser.add_argument('--dataset_dir', type=str, default='../data/dataset')
     parser.add_argument('--figure_dir', type=str, default='../figure')
