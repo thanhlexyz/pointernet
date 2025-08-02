@@ -28,7 +28,7 @@ make visualize
 ![Optimal tour, 5 nodes TSP](figure/plot_opt_tour_tsp_5.jpg "Example of generated TSP instance with 5 nodes and its optimal tour")
 
 
-4. Train Pointernet Actor & Critic models to solve 1M TSP instances
+4. Train Pointernet [`Actor`](./core/lib/pointer_net/actor.py) & [`Critic`](./core/lib/pointer_net/critic.py) models to solve 1M TSP instances
 
 To train the model
 ```bash
