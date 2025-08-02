@@ -15,10 +15,10 @@ plot_train:
 
 test:
 	python3 main.py --scenario=main --mode=test --n_node=5 --solver=random
-	python3 main.py --scenario=main --mode=test --n_node=5 --solver=pretrain
-	python3 main.py --scenario=main --mode=test --n_node=5 --solver=active_search
-	python3 main.py --scenario=main --mode=test --n_node=5 --solver=sampling
 	python3 main.py --scenario=main --mode=test --n_node=5 --solver=optimal
+	python3 main.py --scenario=main --mode=test --n_node=5 --solver=pretrain
+	python3 main.py --scenario=main --mode=test --n_node=5 --solver=sampling
+	python3 main.py --scenario=main --mode=test --n_node=5 --solver=active_search
 
 debug:
 	python3 main.py --scenario=debug

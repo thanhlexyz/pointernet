@@ -22,7 +22,7 @@ make prepare
 
 3. Visualize the generated data
 
-```sh
+```bash
 make visualize
 ```
 ![Optimal tour, 5 nodes TSP](figure/plot_opt_tour_tsp_5.jpg "Example of generated TSP instance with 5 nodes and its optimal tour")
@@ -31,7 +31,7 @@ make visualize
 4. Train Pointernet Actor & Critic models to solve 1M TSP instances
 
 To train the model
-```sh
+```bash
 make train
 ```
 
@@ -40,9 +40,22 @@ Training data is written to
 - `../data/model/*.pkl`: best model by optimality gap of train dataset
 
 To visualize the training progress
-```sh
+```bash
 make plot_train
 ```
 ![Actor loss](figure/plot_line_actor_loss.jpg)
 ![Critic loss](figure/plot_line_critic_loss.jpg)
 ![Avg tour length](figure/plot_line_avg_tour_length.jpg)
+
+5. Compare with other baselines in inference time on test set of 1k TSP instances
+
+To compare solving capabilities of
+[`Random`](./core/lib/solver/random.py),
+[`Optimal`](./core/lib/solver/optimal.py),
+[`Pretrain`](./core/lib/solver/pretrain.py),
+[`Sampling`](./core/lib/solver/sampling.py),
+[`Active Search`](./core/lib/solver/active_search.py)
+```bash
+make test
+make plot_test
+```
