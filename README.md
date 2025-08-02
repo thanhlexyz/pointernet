@@ -29,27 +29,20 @@ make visualize
 
 
 4. Train Pointernet Actor & Critic models to solve 1M TSP instances
+
+To train the model
 ```sh
 make train
 ```
 
-Output data
-
+Training data is written to
 - `../data/csv/*.csv`: log optimality gap of train/test dataset, train CrossEntropyLoss
 - `../data/model/*.pkl`: best model by optimality gap of train dataset
 
-5. Visualize the training progress
-
+To visualize the training progress
 ```sh
-make plot
+make plot_train
 ```
-
-Output data
-
-- `../data/figure/*.jpg`: line plot of log optimality gap of train/test dataset, train CrossEntropyLoss
-
-Example: Convergence chart of training on 1000000 examples, testing on 1000 examples, for TSP problem with 10 nodes.
-
-![Train Optimality Gap](static/plot_line_train_opt_gap_tsp_10.jpg)
-![Test Optimality Gap](static/plot_line_test_opt_gap_tsp_10.jpg)
-![Train Cross Entropy Loss](static/plot_line_train_loss_tsp_10.jpg)
+![Actor loss](figure/plot_line_actor_loss.jpg)
+![Critic loss](figure/plot_line_critic_loss.jpg)
+![Avg tour length](figure/plot_line_avg_tour_length.jpg)

@@ -26,14 +26,11 @@ def plot_line(args):
     plt.cla()
     plt.clf()
     # scenarios
-    datasets = ['tsp']
-    n_nodes = [5, 10]
+    n_nodes = [5]
     modes = ['train']
-    for dataset, n_node, mode in it.product(datasets, n_nodes, modes):
+    for n_node in n_nodes:
         # assign args
-        args.dataset = dataset
         args.n_node = n_node
-        args.mode = mode
         label = f'{args.dataset}_{args.n_node}'
         # load csv
         try:

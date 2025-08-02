@@ -7,6 +7,12 @@ visualize:
 train:
 	python3 main.py --scenario=main --mode=train --solver=pretrain --n_node=5
 
+plot_train:
+	python3 main.py --scenario=plot_line --mode=train --metric=actor_loss & \
+	python3 main.py --scenario=plot_line --mode=train --metric=critic_loss & \
+	python3 main.py --scenario=plot_line --mode=train --metric=avg_tour_length & \
+	wait
+
 test:
 	python3 main.py --scenario=main --mode=test --n_node=5 --solver=random
 	python3 main.py --scenario=main --mode=test --n_node=5 --solver=pretrain
