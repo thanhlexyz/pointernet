@@ -17,8 +17,8 @@ def plot_bar(args):
     # scenarios
     args.dataset = 'tsp'
     args.mode = 'test'
-    n_nodes = [5, 10]
-    solvers = ['random', 'optimal', 'pretrain', 'sampling', 'active_search']
+    n_nodes = [5]
+    solvers = ['random', 'pretrain', 'sampling', 'active_search', 'optimal']
     for n_node in n_nodes:
         args.n_node = n_node
         labels, values = [], []
@@ -41,6 +41,9 @@ def plot_bar(args):
         # decorate
         plt.xlabel('solver')
         plt.ylabel(f'{args.metric}')
+        y_min = np.min(values)
+        y_max = np.max(values)
+        plt.ylim((y_min - 0.1, y_max + 0.1))
         plt.tight_layout()
         # save figure
         path = os.path.join(args.figure_dir, f'{args.scenario}_{args.metric}_{args.n_node}.jpg')

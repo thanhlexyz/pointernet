@@ -23,11 +23,10 @@ test:
 debug:
 	python3 main.py --scenario=debug
 
-# plot:
-# 	python3 main.py --scenario=plot_line --metric=actor_loss & \
-# 	python3 main.py --scenario=plot_line --metric=critic_loss & \
-# 	python3 main.py --scenario=plot_line --metric=avg_tour_length & \
-# 	wait
+
+plot_test:
+	python3 main.py --scenario=plot_bar --mode=test --metric=avg_tour_length
+
 
 prepare:
 	python3 main.py --scenario=prepare --dataset=tsp --n_train_instance=1000000 --n_test_instance=1000

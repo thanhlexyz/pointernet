@@ -59,3 +59,4 @@ To compare solving capabilities of
 make test
 make plot_test
 ```
+![Avg tour length](figure/plot_bar_avg_tour_length_5.jpg)
