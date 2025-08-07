@@ -58,10 +58,10 @@ class Monitor:
             else:
                 self.csv_data[key].append(float(info[key]))
 
-    def export_csv(self, mode):
+    def export_csv(self):
         # extract args
         args = self.args
-        d = os.path.join(args.csv_dir, mode)
+        d = os.path.join(args.csv_dir, args.mode)
         if not os.path.exists(d):
             os.makedirs(d)
         # save data to csv

@@ -1,32 +1,29 @@
 
-all: train plot
-
-visualize:
-	python3 main.py --scenario=plot_opt_tour
-
-train:
-	python3 main.py --scenario=main --mode=train --solver=pretrain --n_node=5
-
-plot_train:
-	python3 main.py --scenario=plot_line --mode=train --metric=actor_loss & \
-	python3 main.py --scenario=plot_line --mode=train --metric=critic_loss & \
-	python3 main.py --scenario=plot_line --mode=train --metric=avg_tour_length & \
-	wait
+prepare:
+	python3 main.py --scenario=prepare --dataset=tsp --n_train_instance=1000000 --n_test_instance=1000
 
 test:
 	python3 main.py --scenario=main --mode=test --n_node=5 --solver=random
+	python3 main.py --scenario=main --mode=test --n_node=5 --solver=greedy
 	python3 main.py --scenario=main --mode=test --n_node=5 --solver=optimal
-	python3 main.py --scenario=main --mode=test --n_node=5 --solver=pretrain
-	python3 main.py --scenario=main --mode=test --n_node=5 --solver=sampling
-	python3 main.py --scenario=main --mode=test --n_node=5 --solver=active_search
-
-debug:
-	python3 main.py --scenario=debug
-
 
 plot_test:
-	python3 main.py --scenario=plot_bar --mode=test --metric=avg_tour_length
+	python3 main.py --scenario=plot_bar --mode=test --metric=value
 
-
-prepare:
-	python3 main.py --scenario=prepare --dataset=tsp --n_train_instance=1000000 --n_test_instance=1000
+# train:
+# 	python3 main.py --scenario=main --mode=train --solver=pretrain --n_node=5
+#
+# plot_train:
+# 	python3 main.py --scenario=plot_line --mode=train --metric=actor_loss & \
+# 	python3 main.py --scenario=plot_line --mode=train --metric=critic_loss & \
+# 	python3 main.py --scenario=plot_line --mode=train --metric=avg_tour_length & \
+# 	wait
+#
+#
+# debug:
+# 	python3 main.py --scenario=debug
+#
+#
+#
+# visualize:
+# 	python3 main.py --scenario=plot_opt_tour

@@ -1,4 +1,4 @@
-import lib
+import simulator as sim
 
 def prepare(args):
-    lib.dataset.create(args)
+    sim.dataset.create(args)

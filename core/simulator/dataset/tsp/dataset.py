@@ -19,7 +19,7 @@ class Dataset(Dataset):
         # extract args
         args = self.args
         # check if data exists
-        n_instance = eval(f'args.n_{self.mode}_instance')
+        n_instance = eval(f'args.n_{self.mode}_episode')
         label = f'{args.dataset}_{self.mode}_{args.n_node}_{n_instance}.npz'
         path = os.path.join(args.dataset_dir, label)
         if os.path.exists(path):

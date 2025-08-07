@@ -9,7 +9,7 @@ def load(args):
     path = os.path.join(args.csv_dir, f'{label}.csv')
     df = pd.read_csv(path)
     y = df[args.metric].to_numpy()
-    return float(y[0])
+    return y.mean()
 
 def plot_bar(args):
     plt.cla()
@@ -18,7 +18,7 @@ def plot_bar(args):
     args.dataset = 'tsp'
     args.mode = 'test'
     n_nodes = [5]
-    solvers = ['random', 'pretrain', 'sampling', 'active_search', 'optimal']
+    solvers = ['random', 'greedy', 'optimal']
     for n_node in n_nodes:
         args.n_node = n_node
         labels, values = [], []

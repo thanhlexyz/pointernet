@@ -1,8 +1,8 @@
-import lib
+import simulator as sim
 
 def main(args):
     # create solver
-    solver = lib.solver.create(args)
+    solver = sim.solver.create(args)
     # run training
     if args.mode == 'train':
         solver.train()

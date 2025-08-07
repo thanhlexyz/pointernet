@@ -21,8 +21,8 @@ def get_args():
     parser.add_argument('--scenario', type=str, default='main')
     parser.add_argument('--mode', type=str, default='test')
     # prepare
-    parser.add_argument('--n_train_instance', type=int, default=1000000)
-    parser.add_argument('--n_test_instance', type=int, default=1000)
+    parser.add_argument('--n_train_episode', type=int, default=1000000)
+    parser.add_argument('--n_test_episode', type=int, default=1000)
     parser.add_argument('--dataset', type=str, default='tsp')
     parser.add_argument('--n_input', type=int, default=2)
     parser.add_argument('--n_node', type=int, default=5)

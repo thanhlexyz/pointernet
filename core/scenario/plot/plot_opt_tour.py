@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
+import simulator as sim
 import networkx as nx
-import lib
 import os
 
 def plot_instance(x, y):
